@@ -838,7 +838,24 @@ class WriteStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
-    
+    public Type typeCheck(){
+        //check cout << fname;
+        //Type expType = myExp.typeCheck();
+        if(myExp instanceof IdNode){
+            Type idNodeType = ((IdNode)myExp).typeCheck();
+            if(idNodeType instanceof FnType){
+                int ln = ((IdNode)myExp).lineNum();
+                int cn = ((IdNode)myExp).charNum();
+                ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
+                return new ErrorType();
+            }
+        }
+        return new Type();
+        //check cout << st :name of struct type
+        //struct st{...};
+        //check cout << v :a var declared to be struct type
+        //struct st v;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("cout << ");
@@ -1075,6 +1092,7 @@ abstract class ExpNode extends ASTnode {
      * Default version for nodes with no names
      */
     public void nameAnalysis(SymTable symTab) { }
+    public abstract Type typeCheck();
 }
 
 class IntLitNode extends ExpNode {
@@ -1083,7 +1101,9 @@ class IntLitNode extends ExpNode {
         myCharNum = charNum;
         myIntVal = intVal;
     }
-
+    public Type typeCheck(){
+        return new IntType();
+    }
     public void unparse(PrintWriter p, int indent) {
         p.print(myIntVal);
     }
@@ -1099,7 +1119,9 @@ class StringLitNode extends ExpNode {
         myCharNum = charNum;
         myStrVal = strVal;
     }
-
+    public Type typeCheck(){
+        return new StringType();
+    }
     public void unparse(PrintWriter p, int indent) {
         p.print(myStrVal);
     }
@@ -1114,7 +1136,9 @@ class TrueNode extends ExpNode {
         myLineNum = lineNum;
         myCharNum = charNum;
     }
-
+    public Type typeCheck(){
+        return new BoolType();
+    }
     public void unparse(PrintWriter p, int indent) {
         p.print("true");
     }
@@ -1128,7 +1152,9 @@ class FalseNode extends ExpNode {
         myLineNum = lineNum;
         myCharNum = charNum;
     }
-
+    public Type typeCheck(){
+        return new BoolType();
+    }
     public void unparse(PrintWriter p, int indent) {
         p.print("false");
     }
@@ -1193,7 +1219,10 @@ class IdNode extends ExpNode {
             link(sym);
         }
     }
-    
+    public Type typeCheck(){
+        //return id's type
+        return mySym.getType();
+    }
     public void unparse(PrintWriter p, int indent) {
         p.print(myStrVal);
         if (mySym != null) {
