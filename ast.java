@@ -826,14 +826,14 @@ class ReadStmtNode extends StmtNode {
              ErrMsg.fatal(ln, cn, ErrorMessages.READ_FN);
              return new ErrorType();
           } else if (idNodeType instanceof StructType) {
-             ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT);
+             ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_NAME);
              return new ErrorType();
           } else if (idNodeType instanceof StructDefType) {
              ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
              return new ErrorType();
           }
        }
-       return new Type();
+       return null;
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -879,7 +879,7 @@ class WriteStmtNode extends StmtNode {
             return new ErrorType();
          }
       }
-      return new Type();
+      return null;
       //check cout << st :name of struct type
       //struct st{...};
       //check cout << v :a var declared to be struct type
@@ -1121,7 +1121,7 @@ abstract class ExpNode extends ASTnode {
      * Default version for nodes with no names
      */
     public void nameAnalysis(SymTable symTab) { }
-    public abstract Type typeCheck();
+    //public abstract Type typeCheck();
 }
 
 class IntLitNode extends ExpNode {
