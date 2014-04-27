@@ -850,6 +850,7 @@ class WriteStmtNode extends StmtNode {
                 return new ErrorType();
             }
         }
+        
         return new Type();
         //check cout << st :name of struct type
         //struct st{...};
