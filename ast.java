@@ -134,7 +134,10 @@ class ProgramNode extends ASTnode {
         SymTable symTab = new SymTable();
         myDeclList.nameAnalysis(symTab);
     }
-    
+    public Type typeCheck(){
+       // return myDeclList.typeCheck();
+        return myDeclList.typeCheck();
+    }
     public void unparse(PrintWriter p, int indent) {
         myDeclList.unparse(p, indent);
     }
@@ -171,7 +174,17 @@ class DeclListNode extends ASTnode {
             }
         }
     }    
-    
+    public Type typeCheck(){
+        Iterator<DeclNode> it = myDecls.iterator();
+        while(it.hasNext()){
+            DeclNode curr = it.next();
+            Type tc = curr.typeCheck();
+            if(tc instanceof ErrorType){
+                return tc;
+            }
+        }
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         Iterator it = myDecls.iterator();
         try {
@@ -249,7 +262,17 @@ class FnBodyNode extends ASTnode {
         myDeclList.nameAnalysis(symTab);
         myStmtList.nameAnalysis(symTab);
     }    
-    
+    public Type typeCheck(){
+        Type dtc = myDeclList.typeCheck();
+        if(dtc instanceof ErrorType){
+            return dtc;
+        }
+        Type stc = myStmtList.typeCheck();
+        if(stc instanceof ErrorType){
+            return stc;
+        }
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         myDeclList.unparse(p, indent);
         myStmtList.unparse(p, indent);
@@ -274,7 +297,17 @@ class StmtListNode extends ASTnode {
             node.nameAnalysis(symTab);
         }
     }    
-    
+    public Type typeCheck(){
+        Iterator<StmtNode> it = myStmts.iterator();
+        while(it.hasNext()){
+            StmtNode curr = it.next();
+            Type tc = curr.typeCheck();
+            if(tc instanceof ErrorType){
+                return tc;
+            }
+        }
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         Iterator<StmtNode> it = myStmts.iterator();
         while (it.hasNext()) {
@@ -325,6 +358,8 @@ abstract class DeclNode extends ASTnode {
      * Note: a formal decl needs to return a sym
      */
     abstract public Sym nameAnalysis(SymTable symTab);
+    abstract public Type typeCheck();
+
 }
 
 class VarDeclNode extends DeclNode {
@@ -352,7 +387,10 @@ class VarDeclNode extends DeclNode {
     public Sym nameAnalysis(SymTable symTab) {
         return nameAnalysis(symTab, symTab);
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public Sym nameAnalysis(SymTable symTab, SymTable globalTab) {
         boolean badDecl = false;
         String name = myId.name();
@@ -496,7 +534,9 @@ class FnDeclNode extends DeclNode {
         
         return null;
     }    
-    
+    public Type typeCheck(){
+        return myBody.typeCheck();
+    } 
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         myType.unparse(p, 0);
@@ -565,7 +605,10 @@ class FormalDeclNode extends DeclNode {
         
         return sym;
     }    
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         myType.unparse(p, 0);
         p.print(" ");
@@ -626,7 +669,10 @@ class StructDeclNode extends DeclNode {
         
         return null;
     }    
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("struct ");
@@ -731,6 +777,7 @@ class StructNode extends TypeNode {
 
 abstract class StmtNode extends ASTnode {
     abstract public void nameAnalysis(SymTable symTab);
+    abstract public Type typeCheck();
 }
 
 class AssignStmtNode extends StmtNode {
@@ -745,7 +792,10 @@ class AssignStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myAssign.nameAnalysis(symTab);
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         myAssign.unparse(p, -1); // no parentheses
@@ -768,7 +818,10 @@ class PostIncStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         myExp.unparse(p, 0);
@@ -791,7 +844,10 @@ class PostDecStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         myExp.unparse(p, 0);
@@ -924,7 +980,10 @@ class IfStmtNode extends StmtNode {
             System.exit(-1);        
         }
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("if (");
@@ -987,7 +1046,10 @@ class IfElseStmtNode extends StmtNode {
             System.exit(-1);        
         }
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("if (");
@@ -1041,7 +1103,10 @@ class WhileStmtNode extends StmtNode {
             System.exit(-1);        
         }
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("while (");
@@ -1071,7 +1136,10 @@ class CallStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myCall.nameAnalysis(symTab);
     }
-
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         myCall.unparse(p, indent);
@@ -1097,7 +1165,10 @@ class ReturnStmtNode extends StmtNode {
             myExp.nameAnalysis(symTab);
         }
     }
-
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("return");
