@@ -60,7 +60,8 @@ public class P5 {
         // (either scanning, parsing, or name-analysis errors), it will call the unparser.
         
         ((ProgramNode)root.value).nameAnalysis();
-        //TODO: Call Type checker here
+        // Call Type checker here
+        ((ProgramNode)root.value).typeCheck();
         ((ASTnode)root.value).unparse(outFile, 0);
         outFile.close();
 
