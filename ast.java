@@ -843,11 +843,18 @@ class WriteStmtNode extends StmtNode {
         //Type expType = myExp.typeCheck();
         if(myExp instanceof IdNode){
             Type idNodeType = ((IdNode)myExp).typeCheck();
+            int ln = ((IdNode)myExp).lineNum();
+            int cn = ((IdNode)myExp).charNum();
+            // Check if it's a forbidden type to write
             if(idNodeType instanceof FnType){
-                int ln = ((IdNode)myExp).lineNum();
-                int cn = ((IdNode)myExp).charNum();
-                ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
-                return new ErrorType();
+               ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
+               return new ErrorType();
+            } else if (idNodeType instanceof StructType) {
+               ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
+               return new ErrorType();
+            } else if (idNodeType instanceof StructDefType) {
+               ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
+               return new ErrorType();
             }
         }
         return new Type();
