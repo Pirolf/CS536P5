@@ -814,6 +814,27 @@ class ReadStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }    
+
+    public Type typeCheck(){
+       //
+       if(myExp instanceof IdNode){
+          Type idNodeType = ((IdNode)myExp).typeCheck();
+          int ln = ((IdNode)myExp).lineNum();
+          int cn = ((IdNode)myExp).charNum();
+          // Check if it's a forbidden type to read
+          if(idNodeType instanceof FnType){
+             ErrMsg.fatal(ln, cn, ErrorMessages.READ_FN);
+             return new ErrorType();
+          } else if (idNodeType instanceof StructType) {
+             ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT);
+             return new ErrorType();
+          } else if (idNodeType instanceof StructDefType) {
+             ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
+             return new ErrorType();
+          }
+       }
+       return new Type();
+    }
     
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
@@ -838,24 +859,31 @@ class WriteStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
-    public Type typeCheck(){
-        //check cout << fname;
-        //Type expType = myExp.typeCheck();
-        if(myExp instanceof IdNode){
-            Type idNodeType = ((IdNode)myExp).typeCheck();
-            if(idNodeType instanceof FnType){
-                int ln = ((IdNode)myExp).lineNum();
-                int cn = ((IdNode)myExp).charNum();
-                ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
-                return new ErrorType();
-            }
-        }
-        
-        return new Type();
-        //check cout << st :name of struct type
-        //struct st{...};
-        //check cout << v :a var declared to be struct type
-        //struct st v;
+    
+   public Type typeCheck(){
+      //check cout << fname;
+      //Type expType = myExp.typeCheck();
+      if(myExp instanceof IdNode){
+         Type idNodeType = ((IdNode)myExp).typeCheck();
+         int ln = ((IdNode)myExp).lineNum();
+         int cn = ((IdNode)myExp).charNum();
+         // Check if it's a forbidden type to write
+         if(idNodeType instanceof FnType){
+            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
+            return new ErrorType();
+         } else if (idNodeType instanceof StructType) {
+            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
+            return new ErrorType();
+         } else if (idNodeType instanceof StructDefType) {
+            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
+            return new ErrorType();
+         }
+      }
+      return new Type();
+      //check cout << st :name of struct type
+      //struct st{...};
+      //check cout << v :a var declared to be struct type
+      //struct st v;
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
