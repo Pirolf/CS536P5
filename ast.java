@@ -1202,11 +1202,20 @@ class ReturnStmtNode extends StmtNode {
         if(myExp == null && (!(retType instanceof VoidNode))){
             ErrMsg.fatal(0, 0, ErrorMessages.RET_VAL_MISSING);
         }else if(myExp != null){
-            if(retType instanceof VoidNode){
-                int ln = myExp.lineNum();
-                int cn = myExp.charNum();
+            int ln = myExp.lineNum();
+            int cn = myExp.charNum();
+            if(retType instanceof VoidNode){             
                 ErrMsg.fatal(ln, cn, ErrorMessages.RET_VAL_IN_VOID_FN);
+            }else{
+                //WRONG_RET_TYPE_FOR_NON_VOID
+                Type expType = myExp.typeCheck();
+                if(expType != null){
+                    if(!(expType.equals(retType))){
+                        ErrMsg.fatal(ln, cn, ErrorMessages.WRONG_RET_TYPE_FOR_NON_VOID);
+                    }
+                }           
             }
+            
         }
         return null;
     }
@@ -1236,7 +1245,7 @@ abstract class ExpNode extends ASTnode {
      * Default version for nodes with no names
      */
     public void nameAnalysis(SymTable symTab) { }
-    public Type typeCheck(){return null;}
+    abstract Type typeCheck();
     public int lineNum(){return 0;}
     public int charNum(){return 0;}
 }
@@ -1432,7 +1441,9 @@ class DotAccessExpNode extends ExpNode {
     public int charNum() {
         return myId.charNum();
     }
-    
+    public Type typeCheck(){
+        return null;
+    }
     /**
      * nameAnalysis
      * Given a symbol table symTab, do:
@@ -1555,6 +1566,10 @@ class AssignNode extends ExpNode {
     public void nameAnalysis(SymTable symTab) {
         myLhs.nameAnalysis(symTab);
         myExp.nameAnalysis(symTab);
+    }
+    public Type typeCheck(){
+        //TODO
+        return null;
     }
     
     public void unparse(PrintWriter p, int indent) {
