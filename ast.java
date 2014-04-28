@@ -341,7 +341,13 @@ class ExpListNode extends ASTnode {
             node.nameAnalysis(symTab);
         }
     }
-    
+    public Type typeCheck(){
+        //TODO
+        return null;
+    }
+    public int getNumExp(){
+        return myExps.size();
+    }
     public void unparse(PrintWriter p, int indent) {
         Iterator<ExpNode> it = myExps.iterator();
         if (it.hasNext()) { // if there is at least one element
@@ -1539,6 +1545,27 @@ class CallExpNode extends ExpNode {
         if(!(myIdType instanceof FnType)){
             ErrMsg.fatal(ln, cn, ErrorMessages.CALL_NON_FN);
             return new ErrorType();
+        }
+        //CALL_FN_WRONG_NUM_ARGS
+        Sym sym = myId.sym();
+        FnSym fnSym;
+        if(sym instanceof FnSym){ //probably not needed, just to be sure
+            fnSym = (FnSym)sym;
+            int paramNum = fnSym.getNumParams();
+            int actualNum;
+            if(myExpList != null){
+               actualNum = myExpList.getNumExp(); 
+            }else{
+                actualNum = 0;
+            }
+            if(paramNum != actualNum){
+                ErrMsg.fatal(ln, cn, ErrorMessages.CALL_FN_WRONG_NUM_ARGS);
+                //return new ErrorType(); //should also catch all typeErros in explist, so don't return
+            }    
+
+        }
+        if(myExpList != null){
+            myExpList.typeCheck();
         }
         return null;
     }
