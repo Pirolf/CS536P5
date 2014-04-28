@@ -38,3 +38,12 @@ void callNonFn(){
 	space();
 	outerspace();
 }
+//CALL_FN_WITH_WRONG_NUM_ARGS
+void wrongArgsCallee(int i1, int i2, bool b1){
+
+}
+void wrongArgsCaller(){
+	wrongArgsCallee(1, 2);
+	wrongArgsCallee(1, 2, true, 3);
+	wrongArgsCallee();
+}
