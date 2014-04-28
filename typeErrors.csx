@@ -67,3 +67,16 @@ void shouldNotRetVal1(){
 void shouldNotRetVal2(){
 	return true;
 }
+//WRONG_RET_TYPE_FOR_NON_VOID
+int shouldRetInt(){
+	return false;
+}
+bool shouldRetBool(){
+	return 1;
+}
+int shouldRetInt_i1(){
+	return b1;
+}
+bool shouldRetBool_b1(){
+	return i1;
+}
