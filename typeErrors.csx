@@ -47,3 +47,12 @@ void wrongArgsCaller(){
 	wrongArgsCallee(1, 2, true, 3);
 	wrongArgsCallee();
 }
+//ACTUAL_NOT_MATCH_FORMAL_TYPE
+void actualFormalMismatchCallee(int i1, bool i2){
+
+}
+void actualFormalMismatchCaller(){
+	actualFormalMismatchCallee(false, true);
+	actualFormalMismatchCallee(1, 2);
+	actualFormalMismatchCallee(false, 3);
+}
