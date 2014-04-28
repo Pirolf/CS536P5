@@ -345,6 +345,9 @@ class ExpListNode extends ASTnode {
         //TODO
         return null;
     }
+    public List<ExpNode> getMyExps(){
+        return myExps;
+    }
     public int getNumExp(){
         return myExps.size();
     }
@@ -1207,7 +1210,9 @@ abstract class ExpNode extends ASTnode {
      * Default version for nodes with no names
      */
     public void nameAnalysis(SymTable symTab) { }
-    //public abstract Type typeCheck();
+    public Type typeCheck(){return null;}
+    public int lineNum(){return 0;}
+    public int charNum(){return 0;}
 }
 
 class IntLitNode extends ExpNode {
@@ -1222,7 +1227,12 @@ class IntLitNode extends ExpNode {
     public void unparse(PrintWriter p, int indent) {
         p.print(myIntVal);
     }
-
+    public int lineNum(){
+        return myLineNum;
+    }
+    public int charNum(){
+        return myCharNum;
+    }
     private int myLineNum;
     private int myCharNum;
     private int myIntVal;
@@ -1240,7 +1250,12 @@ class StringLitNode extends ExpNode {
     public void unparse(PrintWriter p, int indent) {
         p.print(myStrVal);
     }
-
+    public int lineNum(){
+        return myLineNum;
+    }
+    public int charNum(){
+        return myCharNum;
+    }
     private int myLineNum;
     private int myCharNum;
     private String myStrVal;
@@ -1257,7 +1272,12 @@ class TrueNode extends ExpNode {
     public void unparse(PrintWriter p, int indent) {
         p.print("true");
     }
-
+    public int lineNum(){
+        return myLineNum;
+    }
+    public int charNum(){
+        return myCharNum;
+    }
     private int myLineNum;
     private int myCharNum;
 }
@@ -1269,6 +1289,12 @@ class FalseNode extends ExpNode {
     }
     public Type typeCheck(){
         return new BoolType();
+    }
+    public int lineNum(){
+        return myLineNum;
+    }
+    public int charNum(){
+        return myCharNum;
     }
     public void unparse(PrintWriter p, int indent) {
         p.print("false");
@@ -1528,7 +1554,14 @@ class CallExpNode extends ExpNode {
         myId = name;
         myExpList = new ExpListNode(new LinkedList<ExpNode>());
     }
-
+    /*
+    public int lineNum(){
+        return myId.lineNum();
+    }
+    public int charNum(){
+        return myId.charNum();
+    }
+    */
     /**
      * nameAnalysis
      * Given a symbol table symTab, perform name analysis on this node's 
@@ -1549,7 +1582,7 @@ class CallExpNode extends ExpNode {
         //CALL_FN_WRONG_NUM_ARGS
         Sym sym = myId.sym();
         FnSym fnSym;
-        if(sym instanceof FnSym){ //probably not needed, just to be sure
+       // if(sym instanceof FnSym){ //probably not needed, just to be sure
             fnSym = (FnSym)sym;
             int paramNum = fnSym.getNumParams();
             int actualNum;
@@ -1560,12 +1593,27 @@ class CallExpNode extends ExpNode {
             }
             if(paramNum != actualNum){
                 ErrMsg.fatal(ln, cn, ErrorMessages.CALL_FN_WRONG_NUM_ARGS);
-                //return new ErrorType(); //should also catch all typeErros in explist, so don't return
-            }    
-
-        }
+                return new ErrorType(); 
+            } 
+      //  }
+        //ACTUAL_NOT_MATCH_FORMAL_TYPE
         if(myExpList != null){
-            myExpList.typeCheck();
+            List<ExpNode> myActualList = myExpList.getMyExps();
+            List<Type> paramTypes = fnSym.getParamTypes();
+            Iterator<ExpNode> itrActual = myActualList.iterator();
+            Iterator<Type> itrParam = paramTypes.iterator(); 
+            while(itrActual.hasNext()){
+                ExpNode currActual = itrActual.next();
+                Type currParamType = itrParam.next();
+                Type currActualType = currActual.typeCheck();
+                if(!(currActualType instanceof ErrorType)){
+                    if(!(currParamType.equals(currActualType))){
+                        int currActual_ln = currActual.lineNum();
+                        int currActual_cn = currActual.charNum();
+                        ErrMsg.fatal(currActual_ln, currActual_cn, ErrorMessages.ACTUAL_NOT_MATCH_FORMAL_TYPE);
+                    }
+                }
+            }
         }
         return null;
     }
@@ -1588,13 +1636,24 @@ abstract class UnaryExpNode extends ExpNode {
     public UnaryExpNode(ExpNode exp) {
         myExp = exp;
     }
-
+    /*
+    public int lineNum(){
+        return myExp.lineNum();
+    }
+    public int charNum(){
+        return myExp.charNum();
+    }
+    */
     /**
      * nameAnalysis
      * Given a symbol table symTab, perform name analysis on this node's child
      */
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
+    }
+    
+    public Type typeCheck(){
+        return myExp.typeCheck();
     }
     
     // one child
@@ -1617,6 +1676,23 @@ abstract class BinaryExpNode extends ExpNode {
         myExp2.nameAnalysis(symTab);
     }
     
+    public Type typeCheck(){
+        Type tcExp1 = myExp1.typeCheck();
+        Type tcExp2 = myExp2.typeCheck();
+        if(tcExp1.equals(tcExp2)){
+            return tcExp1;
+        }
+        return new ErrorType();
+    }
+    
+    /*
+    public int lineNum(){
+        return myExp1.lineNum();
+    }
+    public int charNum(){
+        return myExp1.charNum();
+    }
+    */
     // two kids
     protected ExpNode myExp1;
     protected ExpNode myExp2;
@@ -1630,7 +1706,6 @@ class UnaryMinusNode extends UnaryExpNode {
     public UnaryMinusNode(ExpNode exp) {
         super(exp);
     }
-
     public void unparse(PrintWriter p, int indent) {
         p.print("(-");
         myExp.unparse(p, 0);
