@@ -56,3 +56,14 @@ void actualFormalMismatchCaller(){
 	actualFormalMismatchCallee(1, 2);
 	actualFormalMismatchCallee(false, 3);
 }
+//RET_VAL_MISSING
+int retValMissing(){
+	return;
+}
+//RET_VAL_IN_VOID_FN
+void shouldNotRetVal1(){
+	return 1;
+}
+void shouldNotRetVal2(){
+	return true;
+}
