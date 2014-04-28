@@ -1169,8 +1169,7 @@ class CallStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
-        myCall.typeCheck();
-        return null;
+        return myCall.typeCheck();
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
@@ -1210,7 +1209,7 @@ class ReturnStmtNode extends StmtNode {
                 //WRONG_RET_TYPE_FOR_NON_VOID
                 Type expType = myExp.typeCheck();
                 if(expType != null){
-                    if(!(expType.equals(retType))){
+                    if(!(expType.equals(retType.type()))){
                         ErrMsg.fatal(ln, cn, ErrorMessages.WRONG_RET_TYPE_FOR_NON_VOID);
                     }
                 }           
@@ -1656,7 +1655,7 @@ class CallExpNode extends ExpNode {
                 }
             }
         }
-        return null;
+        return ((FnSym) myId.sym()).getReturnType();
     }
     // ** unparse **
     public void unparse(PrintWriter p, int indent) {
@@ -1721,11 +1720,23 @@ abstract class BinaryExpNode extends ExpNode {
         Type tcExp1 = myExp1.typeCheck();
         Type tcExp2 = myExp2.typeCheck();
         if(tcExp1.equals(tcExp2)){
-            return tcExp1;
+            return this.getType();
         }
         return new ErrorType();
     }
-    
+    /*
+     * Returns the type that this expression evaluates to
+     */
+    public Type getType() {
+      boolean isBool = (this instanceof EqualsNode) || (this instanceof NotEqualsNode);
+      isBool = isBool || (this instanceof LessNode);
+      isBool = isBool || (this instanceof GreaterNode);
+      isBool = isBool || (this instanceof LessEqNode);
+      isBool = isBool || (this instanceof GreaterEqNode);
+      if (isBool)
+         return new BoolType();
+      return new IntType();
+    }
     /*
     public int lineNum(){
         return myExp1.lineNum();
