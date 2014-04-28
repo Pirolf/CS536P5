@@ -15,7 +15,7 @@ void writef1(){
 
 //WRITE_STRUCT, READ_STRUCT_NAME
 struct space{
-	int a;
+	int dim;
 };
 void writeStruct(){
 	cout << space;
@@ -27,4 +27,14 @@ struct space outerspace;
 void writeStructVar(){
 	cout << outerspace;
 	cin >> outerspace;
+}
+
+//CALL_NON_FN
+int i1;
+bool b1;
+void callNonFn(){
+	i1();
+	b1();
+	space();
+	outerspace();
 }
