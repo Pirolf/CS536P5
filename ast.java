@@ -1146,6 +1146,7 @@ class CallStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
+        myCall.typeCheck();
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1531,7 +1532,16 @@ class CallExpNode extends ExpNode {
         myId.nameAnalysis(symTab);
         myExpList.nameAnalysis(symTab);
     }    
-    
+    public Type typeCheck(){
+        Type myIdType = myId.typeCheck();
+        int ln = myId.lineNum();
+        int cn = myId.charNum();
+        if(!(myIdType instanceof FnType)){
+            ErrMsg.fatal(ln, cn, ErrorMessages.CALL_NON_FN);
+            return new ErrorType();
+        }
+        return null;
+    }
     // ** unparse **
     public void unparse(PrintWriter p, int indent) {
         myId.unparse(p, 0);
