@@ -179,9 +179,11 @@ class DeclListNode extends ASTnode {
         while(it.hasNext()){
             DeclNode curr = it.next();
             Type tc = curr.typeCheck();
+            /*
             if(tc instanceof ErrorType){
                 return tc;
             }
+            */
         }
         return null;
     }
@@ -264,13 +266,17 @@ class FnBodyNode extends ASTnode {
     }    
     public Type typeCheck(){
         Type dtc = myDeclList.typeCheck();
+        /*
         if(dtc instanceof ErrorType){
             return dtc;
         }
+        */
         Type stc = myStmtList.typeCheck();
+        /*
         if(stc instanceof ErrorType){
             return stc;
         }
+        */
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -302,9 +308,11 @@ class StmtListNode extends ASTnode {
         while(it.hasNext()){
             StmtNode curr = it.next();
             Type tc = curr.typeCheck();
+            /*
             if(tc instanceof ErrorType){
                 return tc;
             }
+            */
         }
         return null;
     }
@@ -928,10 +936,10 @@ class WriteStmtNode extends StmtNode {
             ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
             return new ErrorType();
          } else if (idNodeType instanceof StructType) {
-            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
+            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
             return new ErrorType();
          } else if (idNodeType instanceof StructDefType) {
-            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
+            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
             return new ErrorType();
          }
       }
