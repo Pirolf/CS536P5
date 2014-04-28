@@ -283,10 +283,21 @@ class FnBodyNode extends ASTnode {
         myDeclList.unparse(p, indent);
         myStmtList.unparse(p, indent);
     }
-
+    public void setRetType(TypeNode t){
+        retType = t;
+        List<StmtNode> sl = myStmtList.getStmtList();
+        Iterator<StmtNode> itr = sl.iterator();
+        while(itr.hasNext()){
+            StmtNode curr = itr.next();
+            if(curr instanceof ReturnStmtNode){
+                ((ReturnStmtNode)curr).setRetType(t);
+            }
+        }
+    }
     // 2 kids
     private DeclListNode myDeclList;
     private StmtListNode myStmtList;
+    private TypeNode retType;
 }
 
 class StmtListNode extends ASTnode {
@@ -322,7 +333,9 @@ class StmtListNode extends ASTnode {
             it.next().unparse(p, indent);
         }
     }
-
+    public List<StmtNode> getStmtList(){
+        return myStmts;
+    }
     // list of kids (StmtNodes)
     private List<StmtNode> myStmts;
 }
@@ -552,6 +565,7 @@ class FnDeclNode extends DeclNode {
         return null;
     }    
     public Type typeCheck(){
+        myBody.setRetType(myType);
         return myBody.typeCheck();
     } 
     public void unparse(PrintWriter p, int indent) {
@@ -1185,6 +1199,15 @@ class ReturnStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
+        if(myExp == null && (!(retType instanceof VoidNode))){
+            ErrMsg.fatal(0, 0, ErrorMessages.RET_VAL_MISSING);
+        }else if(myExp != null){
+            if(retType instanceof VoidNode){
+                int ln = myExp.lineNum();
+                int cn = myExp.charNum();
+                ErrMsg.fatal(ln, cn, ErrorMessages.RET_VAL_IN_VOID_FN);
+            }
+        }
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1196,9 +1219,12 @@ class ReturnStmtNode extends StmtNode {
         }
         p.println(";");
     }
-
+    public void setRetType(TypeNode t){
+        retType = t;
+    }
     // 1 kid
     private ExpNode myExp; // possibly null
+    private TypeNode retType;
 }
 
 // **********************************************************************
