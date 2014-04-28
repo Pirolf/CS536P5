@@ -19,3 +19,9 @@ struct space{
 void writeStruct(){
 	cout << space;
 }
+
+//WRITE_STRUCT_VAR
+struct space outerspace;
+void writeStructVar(){
+	cout << outerspace;
+}
