@@ -1012,6 +1012,11 @@ class IfStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
+        if (!myExp.typeCheck().equals(new BoolType())) {
+            int ln = myExp.lineNum();
+            int cn = myExp.charNum();
+            ErrMsg.fatal(ln, cn, ErrorMessages.NON_BOOL_EXP_IN_IF_COND);
+        }
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1078,6 +1083,11 @@ class IfElseStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
+        if (!myExp.typeCheck().equals(new BoolType())) {
+            int ln = myExp.lineNum();
+            int cn = myExp.charNum();
+            ErrMsg.fatal(ln, cn, ErrorMessages.NON_BOOL_EXP_IN_IF_COND);
+        }
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1135,7 +1145,11 @@ class WhileStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
-        //if (!myExp.typeCheck().equals(new BoolType()))
+        if (!myExp.typeCheck().equals(new BoolType())) {
+            int ln = myExp.lineNum();
+            int cn = myExp.charNum();
+            ErrMsg.fatal(ln, cn, ErrorMessages.NON_BOOL_EXP_IN_WHILE_COND);
+        }
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
