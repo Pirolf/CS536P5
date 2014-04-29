@@ -80,3 +80,19 @@ int shouldRetInt_i1(){
 bool shouldRetBool_b1(){
 	return i1;
 }
+
+// LOG_OP_TO_NON_BOOL
+int lnb(int x, int y) {
+   x = !x;
+   x = y || x;
+   x = y && x;
+}
+
+// ARITH_OP_TO_NON_NUM
+int aonn(bool x, bool y) {
+   x = x+y;
+   x = x-y;
+   x = x*y;
+   x = x/y;
+   x = -x;
+}

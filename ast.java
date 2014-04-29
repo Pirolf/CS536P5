@@ -824,8 +824,7 @@ class AssignStmtNode extends StmtNode {
         myAssign.nameAnalysis(symTab);
     }
     public Type typeCheck(){
-        //TODO
-        return null;
+        return myAssign.typeCheck();
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
@@ -1136,6 +1135,7 @@ class WhileStmtNode extends StmtNode {
     }
     public Type typeCheck(){
         //TODO
+        //if (!myExp.typeCheck().equals(new BoolType()))
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1168,7 +1168,6 @@ class CallStmtNode extends StmtNode {
         myCall.nameAnalysis(symTab);
     }
     public Type typeCheck(){
-        //TODO
         return myCall.typeCheck();
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1568,7 +1567,15 @@ class AssignNode extends ExpNode {
     }
     public Type typeCheck(){
         //TODO
-        return null;
+        //need to check for fn assignment b4 anything else, to do later
+        int ln = myLhs.lineNum();
+        int cn = myExp.lineNum();
+        Type lType = myLhs.typeCheck();
+        if (!lType.equals(myExp.typeCheck())){
+            ErrMsg.fatal(ln, cn, ErrorMessages.TYPE_MISMATCH);
+            return new ErrorType();
+        }
+        return lType;
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -1691,9 +1698,33 @@ abstract class UnaryExpNode extends ExpNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
-    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
-        return myExp.typeCheck();
+        // Check cases of -bool or !int
+        Type expT = myExp.typeCheck();
+        Type t = null;
+        System.out.println("Was Called");
+        int ln = myExp.lineNum();
+        int cn = myExp.charNum();
+        if (this instanceof UnaryMinusNode) {
+            System.out.println("Is UnaryMinus");
+            t = new IntType();
+            if (!expT.equals(t)){
+               ErrMsg.fatal(ln, cn, ErrorMessages.ARITH_OP_TO_NON_NUM);
+               return new ErrorType();
+            }
+        } else {
+            System.out.println("Is Not");
+            t = new BoolType();
+            if (!expT.equals(t)){
+               ErrMsg.fatal(ln, cn, ErrorMessages.LOG_OP_TO_NON_BOOL);
+               return new ErrorType();
+            }
+        }
+        return t;
     }
     
     // one child
@@ -1733,6 +1764,8 @@ abstract class BinaryExpNode extends ExpNode {
       isBool = isBool || (this instanceof GreaterNode);
       isBool = isBool || (this instanceof LessEqNode);
       isBool = isBool || (this instanceof GreaterEqNode);
+      isBool = isBool || (this instanceof OrNode);
+      isBool = isBool || (this instanceof AndNode);
       if (isBool)
          return new BoolType();
       return new IntType();
