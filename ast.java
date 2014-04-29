@@ -1706,18 +1706,15 @@ abstract class UnaryExpNode extends ExpNode {
         // Check cases of -bool or !int
         Type expT = myExp.typeCheck();
         Type t = null;
-        System.out.println("Was Called");
         int ln = myExp.lineNum();
         int cn = myExp.charNum();
         if (this instanceof UnaryMinusNode) {
-            System.out.println("Is UnaryMinus");
             t = new IntType();
             if (!expT.equals(t)){
                ErrMsg.fatal(ln, cn, ErrorMessages.ARITH_OP_TO_NON_NUM);
                return new ErrorType();
             }
         } else {
-            System.out.println("Is Not");
             t = new BoolType();
             if (!expT.equals(t)){
                ErrMsg.fatal(ln, cn, ErrorMessages.LOG_OP_TO_NON_BOOL);
@@ -1750,25 +1747,64 @@ abstract class BinaryExpNode extends ExpNode {
     public Type typeCheck(){
         Type tcExp1 = myExp1.typeCheck();
         Type tcExp2 = myExp2.typeCheck();
-        if(tcExp1.equals(tcExp2)){
-            return this.getType();
+        // Required type for operands
+        Type opType = new IntType();
+
+        // Error string
+        String e = "";
+
+        if (this.isLog()) {
+            opType = new BoolType();
+            e = ErrorMessages.LOG_OP_TO_NON_BOOL;
         }
-        return new ErrorType();
+        else if (this.isRel()) {
+            e = ErrorMessages.REL_OP_TO_NON_NUM;
+        } else {
+            e = ErrorMessages.ARITH_OP_TO_NON_NUM;
+        }
+        
+        // Exp1 of wrong type
+        if (!tcExp1.equals(opType)) {
+            int ln = myExp1.lineNum();
+            int cn = myExp1.charNum();
+            ErrMsg.fatal(ln, cn, e);
+            return new ErrorType();
+        }
+        
+        // Exp2 of wrong type
+        if (!tcExp2.equals(opType)) {
+            int ln = myExp2.lineNum();
+            int cn = myExp2.charNum();
+            ErrMsg.fatal(ln, cn, e);
+            return new ErrorType();
+        }
+
+        // Passed tests!
+        return this.getType();
     }
-    /*
+    /**
+     * getType
      * Returns the type that this expression evaluates to
      */
     public Type getType() {
-      boolean isBool = (this instanceof EqualsNode) || (this instanceof NotEqualsNode);
-      isBool = isBool || (this instanceof LessNode);
-      isBool = isBool || (this instanceof GreaterNode);
-      isBool = isBool || (this instanceof LessEqNode);
-      isBool = isBool || (this instanceof GreaterEqNode);
-      isBool = isBool || (this instanceof OrNode);
-      isBool = isBool || (this instanceof AndNode);
-      if (isBool)
+      if (this.isLog() || this.isRel())
          return new BoolType();
       return new IntType();
+    }
+
+    /**
+     * isLog
+     * returns true if this is a logic expr
+     */
+    public boolean isLog() {
+         return (this instanceof OrNode) || (this instanceof AndNode);
+    }
+    /**
+     * isRel
+     * returns true if this is a relational operator
+     */
+    public boolean isRel() {
+         return (this instanceof EqualsNode) || (this instanceof NotEqualsNode) || (this instanceof LessNode) || (this instanceof GreaterNode) || (this instanceof LessEqNode) || (this instanceof GreaterEqNode);
     }
     /*
     public int lineNum(){
