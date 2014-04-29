@@ -96,3 +96,18 @@ int aonn(bool x, bool y) {
    x = x/y;
    x = -x;
 }
+
+// NON_BOOL_EXP_IN_IF_COND and NON_BOOL_EXP_IN_WHILE_COND
+int nbexp(int x) {
+   while (x) {
+      x++;
+   }
+   if (x) {
+      x--;
+   }
+   if (x) {
+     x++;
+   } else {
+     x--;
+   }
+}
