@@ -961,25 +961,6 @@ class ReadStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-       /* Do we need to check if it's an idnode? Whatever myExp is,
-       it should have something returned by typeCheck()...
-       same for WriteStmtNode...
-       if(myExp instanceof IdNode){
-          Type idNodeType = ((IdNode)myExp).typeCheck();
-          int ln = ((IdNode)myExp).lineNum();
-          int cn = ((IdNode)myExp).charNum();
-          // Check if it's a forbidden type to read
-          if(idNodeType instanceof FnType){
-             ErrMsg.fatal(ln, cn, ErrorMessages.READ_FN);
-             return new ErrorType();
-          } else if (idNodeType instanceof StructType) {
-             ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_NAME);
-             return new ErrorType();
-          } else if (idNodeType instanceof StructDefType) {
-             ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
-             return new ErrorType();
-          }
-       }*/
       // Check for an already encountered error (prevent cascading err)
       Type t = myExp.typeCheck();
       Type e = new ErrorType();
@@ -993,15 +974,14 @@ class ReadStmtNode extends StmtNode {
          ErrMsg.fatal(ln, cn, ErrorMessages.READ_FN);
          return e;
       }
-      // Read of Struct Name (should double check to be sure we don't have
-      // it mixed up w/ read of struct var...)
+      // Read of Struct Var 
       if (t instanceof StructType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
          return e;
       }
-      // Read of Struct Var
+      // Read of Struct Name
       if (t instanceof StructDefType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
@@ -1065,27 +1045,10 @@ class WriteStmtNode extends StmtNode {
       if (t instanceof StructDefType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
-         ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
+         ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_NAME);
          return e;
       }
 
-      /* prolly don't need, read readstmtnode's comment...
-      if(myExp instanceof IdNode){
-         Type idNodeType = ((IdNode)myExp).typeCheck();
-         int ln = ((IdNode)myExp).lineNum();
-         int cn = ((IdNode)myExp).charNum();
-         // Check if it's a forbidden type to write
-         if(idNodeType instanceof FnType){
-            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
-            return new ErrorType();
-         } else if (idNodeType instanceof StructType) {
-            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
-            return new ErrorType();
-         } else if (idNodeType instanceof StructDefType) {
-            ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
-            return new ErrorType();
-         }
-      }*/
       return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -2018,14 +1981,31 @@ abstract class BinaryExpNode extends ExpNode {
                ErrMsg.fatal(ln, cn, ErrorMessages.EQ_OP_TO_FN);
                return err;
             }
-            // Check that we're not comparing void type fn's (only things that
-            // can be void are fn's...)
+            
+            // Check that we're not comparing void type fn's 
             if (tcExp1.equals(new VoidType())) {
                int ln = myExp1.lineNum();
                int cn = myExp1.charNum();
                ErrMsg.fatal(ln, cn, ErrorMessages.EQ_OP_TO_VOID_FN);
                return err;
             }
+            
+            // Struct Var
+            if (tcExp1 instanceof StructType) {
+               int ln = myExp1.lineNum();
+               int cn = myExp1.charNum();
+               ErrMsg.fatal(ln, cn, ErrorMessages.EQ_OP_TO_STRUCT_VARS);
+               return err;
+            }
+            
+            // Struct Name
+            if (tcExp1 instanceof StructDefType) {
+               int ln = myExp1.lineNum();
+               int cn = myExp1.charNum();
+               ErrMsg.fatal(ln, cn, ErrorMessages.EQ_OP_TO_STRUCT_NAMES);
+               return err;
+            }
+            
             // Other than that, everythings good!
             opType = tcExp1;
         } else {
