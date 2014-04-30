@@ -1,6 +1,6 @@
 public class ErrorMessages{
 	public static final String WRITE_FN = "Attempt to write a function";
-	public static final String WRITE_STRUCT = "Attempt to write a struct";
+	public static final String WRITE_STRUCT_NAME = "Attempt to write a struct name";
 	public static final String WRITE_STRUCT_VAR = "Attempt to write a struct variable";
 	public static final String READ_FN = "Attempt to read a function";
 	public static final String READ_STRUCT_NAME = "Attempt to read a struct name";
