@@ -995,14 +995,14 @@ class ReadStmtNode extends StmtNode {
       }
       // Read of Struct Name (should double check to be sure we don't have
       // it mixed up w/ read of struct var...)
-      if (t.equals(new StructType()) {
+      if (t instanceof StructType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_NAME);
          return e;
       }
       // Read of Struct Var
-      if (t.equals(new StructDefType()) {
+      if (t instanceof StructDefType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
@@ -1046,7 +1046,7 @@ class WriteStmtNode extends StmtNode {
       Type e = new ErrorType();
       if (t.equals(e))
          return e;
-     d
+     
       // Write to function
       if (t.equals(new FnType())) {
          int ln = myExp.lineNum();
@@ -1055,14 +1055,14 @@ class WriteStmtNode extends StmtNode {
          return e;
       }
       // Write to struct var
-      if (t.equals(new StructType())) {
+      if (t instanceof StructType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
          return e;
       }
       // Write to struct
-      if (t.equals(new StructDefType())) {
+      if (t instanceof StructDefType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
