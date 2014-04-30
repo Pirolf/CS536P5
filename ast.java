@@ -1708,14 +1708,12 @@ abstract class UnaryExpNode extends ExpNode {
     public UnaryExpNode(ExpNode exp) {
         myExp = exp;
     }
-    /*
     public int lineNum(){
         return myExp.lineNum();
     }
     public int charNum(){
         return myExp.charNum();
     }
-    */
     /**
      * nameAnalysis
      * Given a symbol table symTab, perform name analysis on this node's child
