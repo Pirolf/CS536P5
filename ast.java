@@ -954,7 +954,9 @@ class ReadStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-       //
+       /* Do we need to check if it's an idnode? Whatever myExp is,
+       it should have something returned by typeCheck()...
+       same for WriteStmtNode...
        if(myExp instanceof IdNode){
           Type idNodeType = ((IdNode)myExp).typeCheck();
           int ln = ((IdNode)myExp).lineNum();
@@ -970,8 +972,21 @@ class ReadStmtNode extends StmtNode {
              ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
              return new ErrorType();
           }
-       }
-       return null;
+       }*/
+      // Check for an already encountered error (prevent cascading err)
+      Type t = myExp.typeCheck();
+      Type e = new ErrorType();
+      if (t.equals(e))
+         return e;
+      
+      if (t.equals(new FnType())) {
+         int ln = myExp.lineNum();
+         int cn = myExp.charNum();
+         ErrMsg.fatal(ln, cn, ErrorMessages.READ_FN);
+         return e;
+      }
+      // here's where we'd check for structs if we had to...
+      return null;
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -1003,8 +1018,23 @@ class WriteStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
    public Type typeCheck(){
-      //check cout << fname;
-      //Type expType = myExp.typeCheck();
+      // Check for an already encountered error (prevent cascading err)
+      Type t = myExp.typeCheck();
+      Type e = new ErrorType();
+      if (t.equals(e))
+         return e;
+      
+      
+      // Don't want to write to a function...
+      if (t.equals(new FnType())) {
+         int ln = myExp.lineNum();
+         int cn = myExp.charNum();
+         ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
+         return e;
+      }
+      // If we were doing structs, we'd put it here... 
+
+      /* prolly don't need, read readstmtnode's comment...
       if(myExp instanceof IdNode){
          Type idNodeType = ((IdNode)myExp).typeCheck();
          int ln = ((IdNode)myExp).lineNum();
@@ -1020,12 +1050,8 @@ class WriteStmtNode extends StmtNode {
             ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
             return new ErrorType();
          }
-      }
+      }*/
       return null;
-      //check cout << st :name of struct type
-      //struct st{...};
-      //check cout << v :a var declared to be struct type
-      //struct st v;
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
