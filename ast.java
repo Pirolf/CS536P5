@@ -1580,15 +1580,26 @@ class AssignNode extends ExpNode {
         myExp.nameAnalysis(symTab);
     }
     public Type typeCheck(){
-        //TODO
-        //need to check for fn assignment b4 anything else, to do later
+        //Check if myExp evaluates to error type (don't cascade err's!)
+        Type err = new ErrorType();
+        Type expType = myExp.typeCheck();
+        if (expType.equals(err))
+            return err;
+
         int ln = myLhs.lineNum();
-        int cn = myExp.lineNum();
+        int cn = myLhs.charNum();
         Type lType = myLhs.typeCheck();
-        if (!lType.equals(myExp.typeCheck())){
+        // Check for matching assignment types
+        if (!lType.equals(expType)){
             ErrMsg.fatal(ln, cn, ErrorMessages.TYPE_MISMATCH);
-            return new ErrorType();
+            return err;
         }
+        // Check for function assignment
+        if (lType.equals(new FnType())) {
+            ErrMsg.fatal(ln, cn, ErrorMessages.FN_ASSIGN);
+            return err;
+        }
+        // Passed everything!
         return lType;
     }
     
