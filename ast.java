@@ -1759,21 +1759,58 @@ abstract class BinaryExpNode extends ExpNode {
     }
     
     public Type typeCheck(){
+        // Get type of lhs & rhs, set err type
         Type tcExp1 = myExp1.typeCheck();
         Type tcExp2 = myExp2.typeCheck();
-        // Required type for operands
-        Type opType = new IntType();
-
+        Type err = new ErrorType();
+        
+        // Make sure you didn't get error types
+        if (tcExp1.equals(err) || tcExp2.equals(err))
+            return err;
+        
+        // Required type for operands 
+        Type opType = null;
+        boolean retErr = false;
         // Error string
         String e = "";
-
+        
+        // Go through different types of binexp nodes, setting relevant vars
         if (this.isLog()) {
             opType = new BoolType();
             e = ErrorMessages.LOG_OP_TO_NON_BOOL;
         }
         else if (this.isRel()) {
+            opType = new IntType();
             e = ErrorMessages.REL_OP_TO_NON_NUM;
+        } 
+        else if (this.isEql()) {
+            // Check for types matching
+            if (!tcExp1.equals(tcExp2)) {
+               int ln = myExp1.lineNum();
+               int cn = myExp1.charNum();
+               ErrMsg.fatal(ln, cn, ErrorMessages.TYPE_MISMATCH);
+               return err;
+            } 
+            // Check that functions themselves aren't being compared
+            if (tcExp1.equals(new FnType())) {
+               int ln = myExp1.lineNum();
+               int cn = myExp1.charNum();
+               ErrMsg.fatal(ln, cn, ErrorMessages.EQ_OP_TO_FN);
+               return err;
+            }
+            // Check that we're not comparing void type fn's (only things that
+            // can be void are fn's...)
+            if (tcExp1.equals(new VoidType())) {
+               int ln = myExp1.lineNum();
+               int cn = myExp1.charNum();
+               ErrMsg.fatal(ln, cn, ErrorMessages.EQ_OP_TO_VOID_FN);
+               return err;
+            }
+            // Other than that, everythings good!
+            opType = tcExp1;
         } else {
+            // Otherwise it's an arith op
+            opType = new IntType();
             e = ErrorMessages.ARITH_OP_TO_NON_NUM;
         }
         
@@ -1782,7 +1819,7 @@ abstract class BinaryExpNode extends ExpNode {
             int ln = myExp1.lineNum();
             int cn = myExp1.charNum();
             ErrMsg.fatal(ln, cn, e);
-            return new ErrorType();
+            retErr = true;
         }
         
         // Exp2 of wrong type
@@ -1790,8 +1827,11 @@ abstract class BinaryExpNode extends ExpNode {
             int ln = myExp2.lineNum();
             int cn = myExp2.charNum();
             ErrMsg.fatal(ln, cn, e);
-            return new ErrorType();
+            retErr = true;
         }
+
+        if (retErr)
+            return err;
 
         // Passed tests!
         return this.getType();
@@ -1801,7 +1841,7 @@ abstract class BinaryExpNode extends ExpNode {
      * Returns the type that this expression evaluates to
      */
     public Type getType() {
-      if (this.isLog() || this.isRel())
+      if (this.isLog() || this.isRel() || this.isEql())
          return new BoolType();
       return new IntType();
     }
@@ -1818,7 +1858,14 @@ abstract class BinaryExpNode extends ExpNode {
      * returns true if this is a relational operator
      */
     public boolean isRel() {
-         return (this instanceof EqualsNode) || (this instanceof NotEqualsNode) || (this instanceof LessNode) || (this instanceof GreaterNode) || (this instanceof LessEqNode) || (this instanceof GreaterEqNode);
+         return (this instanceof LessNode) || (this instanceof GreaterNode) || (this instanceof LessEqNode) || (this instanceof GreaterEqNode);
+    }
+    /**
+     * isEql
+     * returns true if this is an equality operator
+     */
+    public boolean isEql() {
+         return (this instanceof EqualsNode) || (this instanceof NotEqualsNode);
     }
     /*
     public int lineNum(){
