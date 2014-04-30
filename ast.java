@@ -139,8 +139,9 @@ class ProgramNode extends ASTnode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-       // return myDeclList.typeCheck();
-        return myDeclList.typeCheck();
+        // Don't need to check for ErrType (only called at top lvl)
+        myDeclList.typeCheck();
+        return null;
     }
     public void unparse(PrintWriter p, int indent) {
         myDeclList.unparse(p, indent);
@@ -183,6 +184,7 @@ class DeclListNode extends ASTnode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // Don't need to check for errType, can only be called at top lvl
         Iterator<DeclNode> it = myDecls.iterator();
         while(it.hasNext()){
             DeclNode curr = it.next();
@@ -272,6 +274,7 @@ class FnBodyNode extends ASTnode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // Don't need to check for ErrType as fnbody doesn't eval to anything
         myDeclList.typeCheck();
         myStmtList.typeCheck();
         return null;
@@ -316,6 +319,7 @@ class StmtListNode extends ASTnode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // No need to check for ErrType, StmtList doesn't eval to anything
         Iterator<StmtNode> it = myStmts.iterator();
         while(it.hasNext()){
             StmtNode curr = it.next();
@@ -576,6 +580,7 @@ class FnDeclNode extends DeclNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // No need to check for ErrType, fndecl doesn't eval to anything
         myBody.setRetType(myType);
         myBody.typeCheck();
         return null;
@@ -653,7 +658,7 @@ class FormalDeclNode extends DeclNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        //TODO Do we need this one? seems to be taken care of by callexpnode..
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -721,7 +726,7 @@ class StructDeclNode extends DeclNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        //TODO Don't think we need since we aren't implementing structs
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -848,7 +853,9 @@ class AssignStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        return myAssign.typeCheck();
+        // No need to check for ErrType, AssignStmt doesn't eval to anything
+        myAssign.typeCheck();
+        return null;
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
@@ -1097,7 +1104,12 @@ class IfStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        // Prevent cascading error
+        Type t = myExp.typeCheck();
+        Type e = new ErrorType();
+        if (t.equals(e))
+            return null;
+        
         if (!myExp.typeCheck().equals(new BoolType())) {
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
@@ -1172,7 +1184,12 @@ class IfElseStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        // Prevent cascading error
+        Type t = myExp.typeCheck();
+        Type e = new ErrorType();
+        if (t.equals(e))
+            return null;
+        
         if (!myExp.typeCheck().equals(new BoolType())) {
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
@@ -1238,7 +1255,12 @@ class WhileStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        // Prevent cascading error
+        Type t = myExp.typeCheck();
+        Type e = new ErrorType();
+        if (t.equals(e))
+            return null;
+
         if (!myExp.typeCheck().equals(new BoolType())) {
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
@@ -1280,7 +1302,9 @@ class CallStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        return myCall.typeCheck();
+        // Won't produce an error, no need to check for ErrType
+        myCall.typeCheck();
+        return null;
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
@@ -1323,7 +1347,7 @@ class ReturnStmtNode extends StmtNode {
             }else{
                 //WRONG_RET_TYPE_FOR_NON_VOID
                 Type expType = myExp.typeCheck();
-                if(expType != null){
+                if(expType != null && !expType.equals(new ErrorType())){
                     if(!(expType.equals(retType.type()))){
                         ErrMsg.fatal(ln, cn, ErrorMessages.WRONG_RET_TYPE_FOR_NON_VOID);
                     }
@@ -1375,6 +1399,7 @@ class IntLitNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // No need to check for errtype
         return new IntType();
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1402,6 +1427,7 @@ class StringLitNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // no need to check for errtype
         return new StringType();
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1428,6 +1454,7 @@ class TrueNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // no need to check for errtype
         return new BoolType();
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1453,6 +1480,7 @@ class FalseNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // no need to check for errtype
         return new BoolType();
     }
     public int lineNum(){
@@ -1530,6 +1558,7 @@ class IdNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // no need to check for errtype
         //return id's type
         return mySym.getType();
     }
@@ -1776,31 +1805,37 @@ class CallExpNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        Type myIdType = myId.typeCheck();
+        Type t = myId.typeCheck();
+        Type e = new ErrorType();
         int ln = myId.lineNum();
         int cn = myId.charNum();
-        if(!(myIdType instanceof FnType)){
+        if(!(t.equals(new FnType()))){
             ErrMsg.fatal(ln, cn, ErrorMessages.CALL_NON_FN);
-            return new ErrorType();
+            return e;
         }
+        
         //CALL_FN_WRONG_NUM_ARGS
         Sym sym = myId.sym();
-        FnSym fnSym;
-       // if(sym instanceof FnSym){ //probably not needed, just to be sure
-            fnSym = (FnSym)sym;
-            int paramNum = fnSym.getNumParams();
-            int actualNum;
-            if(myExpList != null){
-               actualNum = myExpList.getNumExp(); 
-            }else{
-                actualNum = 0;
-            }
-            if(paramNum != actualNum){
-                ErrMsg.fatal(ln, cn, ErrorMessages.CALL_FN_WRONG_NUM_ARGS);
-                return new ErrorType(); 
-            } 
-      //  }
+        FnSym fnSym = (FnSym) sym;
+        int paramNum = fnSym.getNumParams();
+        int actualNum;
+        if(myExpList != null){
+           actualNum = myExpList.getNumExp(); 
+        }else{
+            actualNum = 0;
+        }
+        
+        if(paramNum != actualNum){
+            ErrMsg.fatal(ln, cn, ErrorMessages.CALL_FN_WRONG_NUM_ARGS);
+            return new ErrorType(); 
+        } 
+
         //ACTUAL_NOT_MATCH_FORMAL_TYPE
+        /* Idk what I'm looking at here... please comment or clean it up using
+         * for each's (unfortunately, it seems in this case for each could only
+         * eliminate one of the iterators, so that would only get rid of 3
+         * lines at most, still better than nothing though!)
+         */
         if(myExpList != null){
             List<ExpNode> myActualList = myExpList.getMyExps();
             List<Type> paramTypes = fnSym.getParamTypes();
@@ -1810,7 +1845,7 @@ class CallExpNode extends ExpNode {
                 ExpNode currActual = itrActual.next();
                 Type currParamType = itrParam.next();
                 Type currActualType = currActual.typeCheck();
-                if(!(currActualType instanceof ErrorType)){
+                if(!(currActualType.equals(e))){
                     if(!(currParamType.equals(currActualType))){
                         int currActual_ln = currActual.lineNum();
                         int currActual_cn = currActual.charNum();
@@ -1870,6 +1905,7 @@ abstract class UnaryExpNode extends ExpNode {
                return new ErrorType();
             }
         } else {
+            // Else is NotNode
             t = new BoolType();
             if (!expT.equals(t)){
                ErrMsg.fatal(ln, cn, ErrorMessages.LOG_OP_TO_NON_BOOL);
