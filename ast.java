@@ -134,6 +134,10 @@ class ProgramNode extends ASTnode {
         SymTable symTab = new SymTable();
         myDeclList.nameAnalysis(symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
        // return myDeclList.typeCheck();
         return myDeclList.typeCheck();
@@ -174,6 +178,10 @@ class DeclListNode extends ASTnode {
             }
         }
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         Iterator<DeclNode> it = myDecls.iterator();
         while(it.hasNext()){
@@ -264,6 +272,10 @@ class FnBodyNode extends ASTnode {
         myDeclList.nameAnalysis(symTab);
         myStmtList.nameAnalysis(symTab);
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         Type dtc = myDeclList.typeCheck();
         /*
@@ -314,6 +326,10 @@ class StmtListNode extends ASTnode {
             node.nameAnalysis(symTab);
         }
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         Iterator<StmtNode> it = myStmts.iterator();
         while(it.hasNext()){
@@ -354,6 +370,10 @@ class ExpListNode extends ASTnode {
             node.nameAnalysis(symTab);
         }
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         return null;
@@ -417,6 +437,10 @@ class VarDeclNode extends DeclNode {
     public Sym nameAnalysis(SymTable symTab) {
         return nameAnalysis(symTab, symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         return null;
@@ -564,6 +588,10 @@ class FnDeclNode extends DeclNode {
         
         return null;
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         myBody.setRetType(myType);
         return myBody.typeCheck();
@@ -636,6 +664,10 @@ class FormalDeclNode extends DeclNode {
         
         return sym;
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         return null;
@@ -700,6 +732,10 @@ class StructDeclNode extends DeclNode {
         
         return null;
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         return null;
@@ -823,6 +859,10 @@ class AssignStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myAssign.nameAnalysis(symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return myAssign.typeCheck();
     }
@@ -848,6 +888,10 @@ class PostIncStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         return null;
@@ -874,6 +918,10 @@ class PostDecStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         return null;
@@ -901,6 +949,10 @@ class ReadStmtNode extends StmtNode {
         myExp.nameAnalysis(symTab);
     }    
 
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
        //
        if(myExp instanceof IdNode){
@@ -946,6 +998,10 @@ class WriteStmtNode extends StmtNode {
         myExp.nameAnalysis(symTab);
     }
     
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
    public Type typeCheck(){
       //check cout << fname;
       //Type expType = myExp.typeCheck();
@@ -1010,6 +1066,10 @@ class IfStmtNode extends StmtNode {
             System.exit(-1);        
         }
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         if (!myExp.typeCheck().equals(new BoolType())) {
@@ -1081,6 +1141,10 @@ class IfElseStmtNode extends StmtNode {
             System.exit(-1);        
         }
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         if (!myExp.typeCheck().equals(new BoolType())) {
@@ -1143,6 +1207,10 @@ class WhileStmtNode extends StmtNode {
             System.exit(-1);        
         }
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         if (!myExp.typeCheck().equals(new BoolType())) {
@@ -1181,6 +1249,10 @@ class CallStmtNode extends StmtNode {
     public void nameAnalysis(SymTable symTab) {
         myCall.nameAnalysis(symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return myCall.typeCheck();
     }
@@ -1209,6 +1281,10 @@ class ReturnStmtNode extends StmtNode {
             myExp.nameAnalysis(symTab);
         }
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //TODO
         if(myExp == null && (!(retType instanceof VoidNode))){
@@ -1268,6 +1344,10 @@ class IntLitNode extends ExpNode {
         myCharNum = charNum;
         myIntVal = intVal;
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return new IntType();
     }
@@ -1291,6 +1371,10 @@ class StringLitNode extends ExpNode {
         myCharNum = charNum;
         myStrVal = strVal;
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return new StringType();
     }
@@ -1313,6 +1397,10 @@ class TrueNode extends ExpNode {
         myLineNum = lineNum;
         myCharNum = charNum;
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return new BoolType();
     }
@@ -1334,6 +1422,10 @@ class FalseNode extends ExpNode {
         myLineNum = lineNum;
         myCharNum = charNum;
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return new BoolType();
     }
@@ -1407,6 +1499,10 @@ class IdNode extends ExpNode {
             link(sym);
         }
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //return id's type
         return mySym.getType();
@@ -1453,6 +1549,10 @@ class DotAccessExpNode extends ExpNode {
     public int charNum() {
         return myId.charNum();
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         return null;
     }
@@ -1579,6 +1679,10 @@ class AssignNode extends ExpNode {
         myLhs.nameAnalysis(symTab);
         myExp.nameAnalysis(symTab);
     }
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         //Check if myExp evaluates to error type (don't cascade err's!)
         Type err = new ErrorType();
@@ -1643,6 +1747,10 @@ class CallExpNode extends ExpNode {
         myId.nameAnalysis(symTab);
         myExpList.nameAnalysis(symTab);
     }    
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         Type myIdType = myId.typeCheck();
         int ln = myId.lineNum();
@@ -1767,6 +1875,10 @@ abstract class BinaryExpNode extends ExpNode {
         myExp2.nameAnalysis(symTab);
     }
     
+    /**
+     * typeCheck
+     * Checks for type errors, returns the type this expression evaluates to.
+     */
     public Type typeCheck(){
         // Get type of lhs & rhs, set err type
         Type tcExp1 = myExp1.typeCheck();
