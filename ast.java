@@ -986,13 +986,29 @@ class ReadStmtNode extends StmtNode {
       if (t.equals(e))
          return e;
       
+      // Read of function
       if (t.equals(new FnType())) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.READ_FN);
          return e;
       }
-      // here's where we'd check for structs if we had to...
+      // Read of Struct Name (should double check to be sure we don't have
+      // it mixed up w/ read of struct var...)
+      if (t.equals(new StructType()) {
+         int ln = myExp.lineNum();
+         int cn = myExp.charNum();
+         ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_NAME);
+         return e;
+      }
+      // Read of Struct Var
+      if (t.equals(new StructDefType()) {
+         int ln = myExp.lineNum();
+         int cn = myExp.charNum();
+         ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
+         return e;
+      }
+      
       return null;
     }
     
@@ -1030,16 +1046,28 @@ class WriteStmtNode extends StmtNode {
       Type e = new ErrorType();
       if (t.equals(e))
          return e;
-      
-      
-      // Don't want to write to a function...
+     d
+      // Write to function
       if (t.equals(new FnType())) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
          ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_FN);
          return e;
       }
-      // If we were doing structs, we'd put it here... 
+      // Write to struct var
+      if (t.equals(new StructType())) {
+         int ln = myExp.lineNum();
+         int cn = myExp.charNum();
+         ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT_VAR);
+         return e;
+      }
+      // Write to struct
+      if (t.equals(new StructDefType())) {
+         int ln = myExp.lineNum();
+         int cn = myExp.charNum();
+         ErrMsg.fatal(ln, cn, ErrorMessages.WRITE_STRUCT);
+         return e;
+      }
 
       /* prolly don't need, read readstmtnode's comment...
       if(myExp instanceof IdNode){
