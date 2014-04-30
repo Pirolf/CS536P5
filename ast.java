@@ -1769,10 +1769,10 @@ class AssignNode extends ExpNode {
      */
     public Type typeCheck(){
         //Check if myExp evaluates to error type (don't cascade err's!)
-        Type err = new ErrorType();
+        Type e = new ErrorType();
         Type expType = myExp.typeCheck();
-        if (expType.equals(err))
-            return err;
+        if (expType.equals(e))
+            return e;
 
         int ln = myLhs.lineNum();
         int cn = myLhs.charNum();
@@ -1780,12 +1780,22 @@ class AssignNode extends ExpNode {
         // Check for matching assignment types
         if (!lType.equals(expType)){
             ErrMsg.fatal(ln, cn, ErrorMessages.TYPE_MISMATCH);
-            return err;
+            return e;
         }
         // Check for function assignment
         if (lType.equals(new FnType())) {
             ErrMsg.fatal(ln, cn, ErrorMessages.FN_ASSIGN);
-            return err;
+            return e;
+        }
+        // Check for struct assignment
+        if (lType instanceof StructType) {
+            ErrMsg.fatal(ln, cn, ErrorMessages.STRUCT_NAME_ASSIGN);
+            return e;
+        }
+        // Check for stuct var assignment
+        if (lType instanceof StructDefType) {
+            ErrMsg.fatal(ln, cn, ErrorMessages.STRUCT_VAR_ASSIGN);
+            return e;
         }
         // Passed everything!
         return lType;
