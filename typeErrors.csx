@@ -82,14 +82,14 @@ bool shouldRetBool_b1(){
 }
 
 // LOG_OP_TO_NON_BOOL
-int lnb(int x, int y) {
+void lnb(int x, int y) {
    x = !x;
    x = y || x;
    x = y && x;
 }
 
 // ARITH_OP_TO_NON_NUM
-int aonn(bool x, bool y) {
+void aonn(bool x, bool y) {
    x = x+y;
    x = x-y;
    x = x*y;
@@ -97,8 +97,26 @@ int aonn(bool x, bool y) {
    x = -x;
 }
 
+// REL_OP_TO_NON_NUM
+void ronn(bool x, bool y) {
+   x = x > y;
+   x = x < y;
+   x = x >= y;
+   x = x <= y;
+}
+
+// EQ_OP_TO_VOID_FN, EQ_OP_TO_FN, and TYPE_MISMATCH
+void eq(int x, bool y) {
+   x = ronn(y, y) != aonn(y, y);
+   x = ronn(y, y) == aonn(y, y);
+   x = aonn != ronn;
+   x = x != y;
+   x = aonn == ronn;
+   x = x == y;
+}
+
 // NON_BOOL_EXP_IN_IF_COND and NON_BOOL_EXP_IN_WHILE_COND
-int nbexp(int x) {
+void nbexp(int x) {
    while (x) {
       x++;
    }
