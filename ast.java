@@ -998,14 +998,14 @@ class ReadStmtNode extends StmtNode {
       if (t instanceof StructType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
-         ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_NAME);
+         ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
          return e;
       }
       // Read of Struct Var
       if (t instanceof StructDefType) {
          int ln = myExp.lineNum();
          int cn = myExp.charNum();
-         ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_VAR);
+         ErrMsg.fatal(ln, cn, ErrorMessages.READ_STRUCT_NAME);
          return e;
       }
       
@@ -1789,12 +1789,12 @@ class AssignNode extends ExpNode {
         }
         // Check for struct assignment
         if (lType instanceof StructType) {
-            ErrMsg.fatal(ln, cn, ErrorMessages.STRUCT_NAME_ASSIGN);
+            ErrMsg.fatal(ln, cn, ErrorMessages.STRUCT_VAR_ASSIGN);
             return e;
         }
         // Check for stuct var assignment
         if (lType instanceof StructDefType) {
-            ErrMsg.fatal(ln, cn, ErrorMessages.STRUCT_VAR_ASSIGN);
+            ErrMsg.fatal(ln, cn, ErrorMessages.STRUCT_NAME_ASSIGN);
             return e;
         }
         // Passed everything!
