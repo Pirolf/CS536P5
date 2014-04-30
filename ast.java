@@ -1730,14 +1730,12 @@ class CallExpNode extends ExpNode {
         myId = name;
         myExpList = new ExpListNode(new LinkedList<ExpNode>());
     }
-    /*
     public int lineNum(){
         return myId.lineNum();
     }
     public int charNum(){
         return myId.charNum();
     }
-    */
     /**
      * nameAnalysis
      * Given a symbol table symTab, perform name analysis on this node's 
