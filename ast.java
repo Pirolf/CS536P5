@@ -187,11 +187,6 @@ class DeclListNode extends ASTnode {
         while(it.hasNext()){
             DeclNode curr = it.next();
             Type tc = curr.typeCheck();
-            /*
-            if(tc instanceof ErrorType){
-                return tc;
-            }
-            */
         }
         return null;
     }
@@ -277,18 +272,8 @@ class FnBodyNode extends ASTnode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        Type dtc = myDeclList.typeCheck();
-        /*
-        if(dtc instanceof ErrorType){
-            return dtc;
-        }
-        */
-        Type stc = myStmtList.typeCheck();
-        /*
-        if(stc instanceof ErrorType){
-            return stc;
-        }
-        */
+        myDeclList.typeCheck();
+        myStmtList.typeCheck();
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -335,11 +320,6 @@ class StmtListNode extends ASTnode {
         while(it.hasNext()){
             StmtNode curr = it.next();
             Type tc = curr.typeCheck();
-            /*
-            if(tc instanceof ErrorType){
-                return tc;
-            }
-            */
         }
         return null;
     }
@@ -375,7 +355,9 @@ class ExpListNode extends ASTnode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        //TODO actually, I don't think we need, would only ever possibly
+        //get called by callexpnode, but we handle it in that's typeCheck
+        //method...
         return null;
     }
     public List<ExpNode> getMyExps(){
@@ -442,7 +424,8 @@ class VarDeclNode extends DeclNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        //TODO  Do we need this one...? I don't think you can get a bad type
+        //in a declaration...
         return null;
     }
     public Sym nameAnalysis(SymTable symTab, SymTable globalTab) {
@@ -594,8 +577,9 @@ class FnDeclNode extends DeclNode {
      */
     public Type typeCheck(){
         myBody.setRetType(myType);
-        return myBody.typeCheck();
-    } 
+        myBody.typeCheck();
+        return null;
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         myType.unparse(p, 0);
@@ -893,8 +877,16 @@ class PostIncStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
-        return null;
+        // Don't need to check for err type, it can only be an identifier...
+        if (myExp.typeCheck().equals(new IntType()))
+            return new IntType();
+
+        // myExp wasn't int type, produce error!
+        int ln = myExp.lineNum();
+        int cn = myExp.charNum();
+        ErrMsg.fatal(ln, cn, ErrorMessages.ARITH_OP_TO_NON_NUM);
+
+        return new ErrorType();
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
@@ -923,8 +915,16 @@ class PostDecStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
-        return null;
+        // Don't need to check for err type, it can only be an identifier...
+        if (myExp.typeCheck().equals(new IntType()))
+            return new IntType();
+
+        // myExp wasn't int type, produce error!
+        int ln = myExp.lineNum();
+        int cn = myExp.charNum();
+        ErrMsg.fatal(ln, cn, ErrorMessages.ARITH_OP_TO_NON_NUM);
+
+        return new ErrorType(); 
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
