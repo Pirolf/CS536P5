@@ -1637,7 +1637,8 @@ class DotAccessExpNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        return null;
+        // No need to check for errtype
+        return myId.typeCheck();
     }
     /**
      * nameAnalysis
