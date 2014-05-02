@@ -129,3 +129,35 @@ void nbexp(int x) {
      x--;
    }
 }
+
+struct ocean{
+   int sea;
+};
+int water;
+void forCascading(int k){
+
+}
+bool forAllErrs(int c1){
+   return false;
+}
+//Test Cascading Errors
+void noCascading(){
+   struct ocean atlantic;
+   cout << atlantic + 1;         // atlantic + 1 is an error; the write is OK
+   cin >> (true + 3) * 4;         // true + 3 is an error; the * is OK
+   water = true && (false || 3);   // false || 3 is an error; the && is OK
+   forCascading("a" * 4);            // "a" * 4 is an error; the call is OK
+   water = 1 + atlantic();               // p() is an error; the + is OK
+   if((true + 3) == water){
+
+   }        // true + 3 is an error; the == is OK                       // regardless of the type of x
+}
+void shouldPrintAllErrors(){
+   int a;
+   int i;
+   a = true + "hello";    // one error for each of the non-int operands of the +
+   a = 1 + forAllErrs(true); // one for the bad arg type and one for the 2nd operand of the +
+   i = 1 + forAllErrs(1, 2);      // one for the wrong number of args and one for the 2nd operand of the +
+   return 3 + true;    // in a void function: one error for the 2nd operand to +
+                  // and one for returning a value
+}
