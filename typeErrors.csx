@@ -12,31 +12,65 @@ void writef1(){
 	cout << f1;
 	cin >> f1;
 }
-
+void writef2_nested(){
+   cout << writef1;
+   cin >> writef1;
+}
 //WRITE_STRUCT, READ_STRUCT_NAME
 struct space{
 	int dim;
+};
+struct spaceOutsideSpace{
+   struct space s;
+   int speed;
 };
 void writeStruct(){
 	cout << space;
 	cin >> space;
 }
-
+void writeStruct_nested(){
+   struct spaceOutsideSpace sos;
+   cout << spaceOutsideSpace;
+   cin >> spaceOutsideSpace;
+   //write, read a struct variable's struct field
+   cout << sos.s;
+   cin >> sos.s;
+}
 //WRITE_STRUCT_VAR, READ_STRUCT_VAR
 struct space outerspace;
+struct spaceOutsideSpace recursiveSpace;
 void writeStructVar(){
 	cout << outerspace;
 	cin >> outerspace;
+
+   cout << recursiveSpace;
+   cin >> recursiveSpace;
+
+   cout << recursiveSpace.s;
+   cin >> recursiveSpace.s;
 }
 
 //CALL_NON_FN
 int i1;
+int i2;
 bool b1;
 void callNonFn(){
+   int i3;
+   bool b3;
+   struct space spaceHere;
+   struct spaceOutsideSpace sosHere;
+
 	i1();
 	b1();
-	space();
-	outerspace();
+	space(); //struct
+	spaceOutsideSpace(); //nested struct
+   i3(); //int defined in curr scope
+   b3(); //bool defined in curr scope
+   spaceHere(); //struct var defined in curr scope
+   sosHere(); //nested struct var defined in curr scope
+
+   outerspace(); //struct var
+   recursiveSpace(); //nested struct var
 }
 //CALL_FN_WITH_WRONG_NUM_ARGS
 void wrongArgsCallee(int i1, int i2, bool b1){
