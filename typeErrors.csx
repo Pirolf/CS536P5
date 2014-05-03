@@ -74,21 +74,45 @@ void callNonFn(){
 }
 //CALL_FN_WITH_WRONG_NUM_ARGS
 void wrongArgsCallee(int i1, int i2, bool b1){
-
 }
-void wrongArgsCaller(){
-	wrongArgsCallee(1, 2);
-	wrongArgsCallee(1, 2, true, 3);
-	wrongArgsCallee();
+
+int i10;
+bool b10;
+void wrongArgsCaller(int i1, bool b1){
+   int i11;   
+   bool b11;
+	wrongArgsCallee(1, 2); //actual < param
+   wrongArgsCallee(i10, b10);
+   wrongArgsCallee(i10+i11, b10 && b11);
+
+	wrongArgsCallee(1, 2, true, 3); // actual > param
+   wrongArgsCallee(i10 * 2 /i11, i10 > 1 || i11 == i10, i11-2, !b10);
+	wrongArgsCallee(); // no actuals
+}
+//test if there are cascading errors 
+void wrongArgsCallerCaller(){
+   wrongArgsCaller(1);
+   wrongArgsCaller(1, true, 2);
+   wrongArgsCaller();
 }
 //ACTUAL_NOT_MATCH_FORMAL_TYPE
 void actualFormalMismatchCallee(int i1, bool i2){
 
 }
 void actualFormalMismatchCaller(){
+   int i20;
+   bool b20;
 	actualFormalMismatchCallee(false, true);
 	actualFormalMismatchCallee(1, 2);
 	actualFormalMismatchCallee(false, 3);
+
+   actualFormalMismatchCallee(b10, true);
+   actualFormalMismatchCallee(b10 || b20 , true);
+   actualFormalMismatchCallee(i20, -i10);
+   actualFormalMismatchCallee(b10 && i20 <= 1, i20*i20);
+   actualFormalMismatchCallee(b10, b20);
+   actualFormalMismatchCallee(!b10 || !b20, b10 || b20);
+   
 }
 //RET_VAL_MISSING
 int retValMissing(){
@@ -98,8 +122,19 @@ int retValMissing(){
 void shouldNotRetVal1(){
 	return 1;
 }
+void shouldNotRetVa1Exp(){
+   int i;
+   return i + i10;
+}
 void shouldNotRetVal2(){
 	return true;
+}
+void shouldNotRetVal2Exp(){
+   bool b;
+   return b && b10;
+}
+void shouldNotRetStructField(){
+
 }
 //WRONG_RET_TYPE_FOR_NON_VOID
 int shouldRetInt(){
