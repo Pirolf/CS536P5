@@ -1908,8 +1908,13 @@ abstract class UnaryExpNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        // Check cases of -bool or !int
+        //to prevent cascading errs
         Type expT = myExp.typeCheck();
+        Type e = new ErrorType();
+        if (expT.equals(e))
+            return e;
+
+        // Check cases of -bool or !int
         Type t = null;
         int ln = myExp.lineNum();
         int cn = myExp.charNum();
@@ -1917,15 +1922,14 @@ abstract class UnaryExpNode extends ExpNode {
             t = new IntType();
             if (!expT.equals(t)){
                ErrMsg.fatal(ln, cn, ErrorMessages.ARITH_OP_TO_NON_NUM);
-               return new ErrorType();
+               return e;
             }
         } else {
             // Else is NotNode
             t = new BoolType();
-            //to prevent cascading errs
-            if (!expT.equals(new ErrorType()) && !expT.equals(t)){
+            if (!expT.equals(t)){
                ErrMsg.fatal(ln, cn, ErrorMessages.LOG_OP_TO_NON_BOOL);
-               return new ErrorType();
+               return e;
             }
         }
         return t;
