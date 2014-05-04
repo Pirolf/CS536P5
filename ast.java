@@ -1922,7 +1922,8 @@ abstract class UnaryExpNode extends ExpNode {
         } else {
             // Else is NotNode
             t = new BoolType();
-            if (!expT.equals(t)){
+            //to prevent cascading errs
+            if (!expT.equals(new ErrorType()) && !expT.equals(t)){
                ErrMsg.fatal(ln, cn, ErrorMessages.LOG_OP_TO_NON_BOOL);
                return new ErrorType();
             }

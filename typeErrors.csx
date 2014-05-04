@@ -210,6 +210,7 @@ void ronn(bool x, bool y, bool z) {
    }else{
       x = (x >= z + 3);
       x = !(x >= z);
+      x = !(3 >= z);
    }
    while( x < z){
       z = z <= x;
