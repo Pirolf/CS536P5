@@ -1334,16 +1334,17 @@ class ReturnStmtNode extends StmtNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
-        //TODO
+        // Check for missing ret val from nonvoid func
         if(myExp == null && (!(retType instanceof VoidNode))){
             ErrMsg.fatal(0, 0, ErrorMessages.RET_VAL_MISSING);
         }else if(myExp != null){
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
+            // Check for ret val from void func
             if(retType instanceof VoidNode){             
                 ErrMsg.fatal(ln, cn, ErrorMessages.RET_VAL_IN_VOID_FN);
             }else{
-                //WRONG_RET_TYPE_FOR_NON_VOID
+                // Check for wrong ret val type
                 Type expType = myExp.typeCheck();
                 if(expType != null && !expType.equals(new ErrorType())){
                     if(!(expType.equals(retType.type()))){
@@ -1820,55 +1821,55 @@ class CallExpNode extends ExpNode {
      * Checks for type errors, returns the type this expression evaluates to.
      */
     public Type typeCheck(){
+        // typeChecking an id won't produce errorType, no need to check
         Type t = myId.typeCheck();
         Type e = new ErrorType();
-        int ln = myId.lineNum();
-        int cn = myId.charNum();
+        // Check for call of non func
         if(!(t.equals(new FnType()))){
             ErrMsg.fatal(ln, cn, ErrorMessages.CALL_NON_FN);
             return e;
         }
         
-        //CALL_FN_WRONG_NUM_ARGS
+        // Calculate num of formals & num of actuals
         Sym sym = myId.sym();
         FnSym fnSym = (FnSym) sym;
         int paramNum = fnSym.getNumParams();
         int actualNum;
         if(myExpList != null){
-           actualNum = myExpList.getNumExp(); 
+            actualNum = myExpList.getNumExp(); 
         }else{
             actualNum = 0;
         }
-        
+        // num formals != num actuals
         if(paramNum != actualNum){
+            int ln = myId.lineNum();
+            int cn = myId.charNum();
             ErrMsg.fatal(ln, cn, ErrorMessages.CALL_FN_WRONG_NUM_ARGS);
-            return new ErrorType(); 
+            return e; 
         } 
 
-        //ACTUAL_NOT_MATCH_FORMAL_TYPE
-        /* Idk what I'm looking at here... please comment or clean it up using
-         * for each's (unfortunately, it seems in this case for each could only
-         * eliminate one of the iterators, so that would only get rid of 3
-         * lines at most, still better than nothing though!)
-         */
+        // Make sure formal & actual types match
         if(myExpList != null){
             List<ExpNode> myActualList = myExpList.getMyExps();
             List<Type> paramTypes = fnSym.getParamTypes();
             Iterator<ExpNode> itrActual = myActualList.iterator();
             Iterator<Type> itrParam = paramTypes.iterator(); 
+            // Iterate through actual & formal list, ensuring each type matches
             while(itrActual.hasNext()){
                 ExpNode currActual = itrActual.next();
                 Type currParamType = itrParam.next();
                 Type currActualType = currActual.typeCheck();
                 if(!(currActualType.equals(e))){
+                    // Type mismatch from actual & formal at current item
                     if(!(currParamType.equals(currActualType))){
-                        int currActual_ln = currActual.lineNum();
-                        int currActual_cn = currActual.charNum();
-                        ErrMsg.fatal(currActual_ln, currActual_cn, ErrorMessages.ACTUAL_NOT_MATCH_FORMAL_TYPE);
+                        int ln = currActual.lineNum();
+                        int cn = currActual.charNum();
+                        ErrMsg.fatal(ln, cn, ErrorMessages.ACTUAL_NOT_MATCH_FORMAL_TYPE);
                     }
                 }
             }
         }
+        // Return this function's return type
         return ((FnSym) myId.sym()).getReturnType();
     }
     // ** unparse **
