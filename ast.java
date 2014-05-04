@@ -1096,16 +1096,18 @@ class IfStmtNode extends StmtNode {
      */
     public Type typeCheck(){
         // Prevent cascading error
-        Type t = myExp.typeCheck();
         Type e = new ErrorType();
-        if (t.equals(e))
-            return null;
-        
-        if (!myExp.typeCheck().equals(new BoolType())) {
+        Type t = myExp.typeCheck();
+        if (!t.equals(e) && !t.equals(new BoolType())) {
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
             ErrMsg.fatal(ln, cn, ErrorMessages.NON_BOOL_EXP_IN_IF_COND);
         }
+        Type bodyDecl = myDeclList.typeCheck();
+        Type bodyStmt = myStmtList.typeCheck();
+        
+        
+        
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
@@ -1177,7 +1179,7 @@ class IfElseStmtNode extends StmtNode {
     public Type typeCheck(){
         // Prevent cascading error
         Type t = myExp.typeCheck();
-        if (!t.equals(new BoolType())) {
+        if (!t.equals(new ErrorType()) && !t.equals(new BoolType())) {
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
             ErrMsg.fatal(ln, cn, ErrorMessages.NON_BOOL_EXP_IN_IF_COND);
@@ -1186,8 +1188,6 @@ class IfElseStmtNode extends StmtNode {
         Type ifstmt = myThenStmtList.typeCheck();
         Type elsedecl = myElseDeclList.typeCheck();
         Type elsestmt = myElseStmtList.typeCheck();
-
-        Type e = new ErrorType();
         /*
         if (t.equals(e))
             return null;

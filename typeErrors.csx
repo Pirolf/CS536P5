@@ -247,6 +247,7 @@ void nbexp(int x) {
    }
    if (x) {
       x--;
+      x = !x;
    }
    if(x*y){
       x = x + y;
