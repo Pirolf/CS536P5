@@ -166,6 +166,14 @@ void lnb(int x, int y) {
    x = y || x;
    x = y && x;
    x = x1 && x;
+   if(!x){
+      y = x && 2 || y;
+   }else{
+      x = x && y;
+   }
+   while(y || 3){
+      x = !y;
+   }
 }
 
 // ARITH_OP_TO_NON_NUM
@@ -197,9 +205,14 @@ void ronn(bool x, bool y, bool z) {
    x = x < y;
    x = x >= y;
    x = x <= y;
-   b31 = (b31 != true);
-   b31 = (x == y);
-   b31 = (x == (y == z));
+   if(x > y + z){
+      x = x < z - y;
+   }else{
+      x = (x >= z + 3);
+   }
+   while( x < z){
+      z = z <= x;
+   }
 }
 
 // EQ_OP_TO_VOID_FN, EQ_OP_TO_FN, and TYPE_MISMATCH
@@ -210,15 +223,38 @@ void eq(int x, bool y) {
    x = x != y;
    x = aonn == ronn;
    x = x == y;
+   if(ronn(y, y) == aonn(y, y)){
+      x = x != y;
+   }else{
+      x = ronn(y, y) == aonn(y, y);
+   }
+   while(x==y){
+      x = aonn == ronn;
+   }
 }
 
 // NON_BOOL_EXP_IN_IF_COND and NON_BOOL_EXP_IN_WHILE_COND
 void nbexp(int x) {
+   int y;
    while (x) {
+      x++;
+   }
+   while(x+y){
+      y--;
+   }
+   while(1){
       x++;
    }
    if (x) {
       x--;
+   }
+   if(x*y){
+      x = x + y;
+   }
+   if(1){
+
+   }else{
+      y--;
    }
    if (x) {
      x++;
