@@ -1723,6 +1723,12 @@ class AssignNode extends ExpNode {
         myLhs = lhs;
         myExp = exp;
     }
+    public int lineNum(){
+        return myLhs.lineNum();
+    }
+    public int charNum(){
+        return myLhs.charNum();
+    }
 
     /**
      * nameAnalysis
@@ -2074,14 +2080,14 @@ abstract class BinaryExpNode extends ExpNode {
     public boolean isEql() {
          return (this instanceof EqualsNode) || (this instanceof NotEqualsNode);
     }
-    /*
+    
     public int lineNum(){
         return myExp1.lineNum();
     }
     public int charNum(){
         return myExp1.charNum();
     }
-    */
+    
     // two kids
     protected ExpNode myExp1;
     protected ExpNode myExp2;
