@@ -133,45 +133,73 @@ void shouldNotRetVal2Exp(){
    bool b;
    return b && b10;
 }
-void shouldNotRetStructField(){
-
+void shouldNotRetStructField1(){
+   struct space sss;
+   return sss.dim;
+}
+void shouldNotRetStructField2(){
+   return outerspace.dim;
+}
+void shouldNotRetNestedStructField1(){
+   return recursiveSpace.s.dim;
 }
 //WRONG_RET_TYPE_FOR_NON_VOID
-int shouldRetInt(){
+int shouldRetInt1(){
 	return false;
 }
-bool shouldRetBool(){
+int shouldRetInt2(){
+   bool b;
+   return b ||!b10;
+}
+bool shouldRetBool1(){
 	return 1;
 }
-int shouldRetInt_i1(){
-	return b1;
-}
-bool shouldRetBool_b1(){
-	return i1;
+bool shouldRetBool2(){
+   int i;
+   return i10 *i + 1;
 }
 
 // LOG_OP_TO_NON_BOOL
+int x1;
 void lnb(int x, int y) {
    x = !x;
    x = y || x;
    x = y && x;
+   x = x1 && x;
 }
 
 // ARITH_OP_TO_NON_NUM
+bool b31;
 void aonn(bool x, bool y) {
    x = x+y;
    x = x-y;
    x = x*y;
    x = x/y;
    x = -x;
+   if(x + 3 > 2){
+      x = x - x/2;
+   }else{
+      x = y * 2;
+   }
+   while(x + y){
+      y = x + y;
+   }
+  // x = x++;
+  // x = x--;
+   x= b31*2;
+   x = x + y - y * 2;
+   x = 2 + i10 - x * y;
 }
 
 // REL_OP_TO_NON_NUM
-void ronn(bool x, bool y) {
+void ronn(bool x, bool y, bool z) {
    x = x > y;
    x = x < y;
    x = x >= y;
    x = x <= y;
+   b31 = (b31 != true);
+   b31 = (x == y);
+   b31 = (x == (y == z));
 }
 
 // EQ_OP_TO_VOID_FN, EQ_OP_TO_FN, and TYPE_MISMATCH
