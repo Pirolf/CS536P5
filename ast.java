@@ -1256,14 +1256,14 @@ class WhileStmtNode extends StmtNode {
         // Prevent cascading error
         Type t = myExp.typeCheck();
         Type e = new ErrorType();
-        if (t.equals(e))
-            return null;
 
-        if (!myExp.typeCheck().equals(new BoolType())) {
+        if (!t.equals(e) && !myExp.typeCheck().equals(new BoolType())) {
             int ln = myExp.lineNum();
             int cn = myExp.charNum();
             ErrMsg.fatal(ln, cn, ErrorMessages.NON_BOOL_EXP_IN_WHILE_COND);
         }
+        myDeclList.typeCheck();
+        myStmtList.typeCheck();
         return null;
     }
     public void unparse(PrintWriter p, int indent) {
