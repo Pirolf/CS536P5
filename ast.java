@@ -1826,6 +1826,8 @@ class CallExpNode extends ExpNode {
         Type e = new ErrorType();
         // Check for call of non func
         if(!(t.equals(new FnType()))){
+            int ln = myId.lineNum();
+            int cn = myId.charNum();
             ErrMsg.fatal(ln, cn, ErrorMessages.CALL_NON_FN);
             return e;
         }

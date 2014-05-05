@@ -172,7 +172,7 @@ void lnb(int x, int y) {
       x = x && y;
    }
    while(y || 3){
-      x = !y;
+      x = 3 + !y;
    }
 }
 
@@ -185,18 +185,18 @@ void aonn(bool x, bool y) {
    x = x/y;
    x = -x;
    if(x + 3 > 2){
-      x = x - x/2;
+      x = !(x - x/2) && y;
    }else{
       x = y * 2;
    }
    while(x + y){
-      y = x + y;
+      y = (x + y) || x;
    }
-  // x = x++;
-  // x = x--;
+   //x = x++;
+   //x = x--;
    x= b31*2;
    x = x + y - y * 2;
-   x = 2 + i10 - x * y;
+   x = 2 || i10 - x * y;
 }
 
 // REL_OP_TO_NON_NUM
