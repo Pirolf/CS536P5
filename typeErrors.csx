@@ -8,9 +8,14 @@
 int f1(){
 	return 1;
 }
+int f4(){
+   return 0;
+}
 void writef1(){
 	cout << f1;
+   cout << 1 + f1;
 	cin >> f1;
+   cin >> f1 / f4;
 }
 void writef2_nested(){
    cout << writef1;
@@ -26,7 +31,9 @@ struct spaceOutsideSpace{
 };
 void writeStruct(){
 	cout << space;
+   cout << space + space/2;
 	cin >> space;
+   cin >> space || 1;
 }
 void writeStruct_nested(){
    struct spaceOutsideSpace sos;
@@ -54,7 +61,7 @@ void writeStructVar(){
 int i1;
 int i2;
 bool b1;
-void callNonFn(){
+int callNonFn(){
    int i3;
    bool b3;
    struct space spaceHere;
@@ -75,17 +82,20 @@ void callNonFn(){
       recursiveSpace();
    }else{
       sosHere();
+      return spaceHere();
    }
    while(space() || b1()){
       i3();
+      return recursiveSpace() + i3();
    }
+   return space();
 }
 //CALL_FN_WITH_WRONG_NUM_ARGS
 int wrongArgsCallee(int i1, int i2, bool b1){
 }
 int i10;
 bool b10;
-void wrongArgsCaller(int i1, bool b1){
+int wrongArgsCaller(int i1, bool b1){
    int i11;   
    bool b11;
    wrongArgsCallee(1, 2); //actual < param
@@ -99,33 +109,51 @@ void wrongArgsCaller(int i1, bool b1){
    b11 = wrongArgsCallee(i10 * 2 /i11, i10 > 1 || i11 == i10, i11-2, !b10);
 }
 //test if there are cascading errors 
-void wrongArgsCallerCaller(){
+int wrongArgsCallerCaller(){
+   int x;
    wrongArgsCaller(1);
    wrongArgsCaller(1, true, 2);
    wrongArgsCaller();
+   return wrongArgsCaller(x*2);
 }
 //ACTUAL_NOT_MATCH_FORMAL_TYPE
-void actualFormalMismatchCallee(int i1, bool i2){
-
+bool actualFormalMismatchCallee(int i1, bool i2){
+   return false;
 }
 void actualFormalMismatchCaller(){
    int i20;
    bool b20;
 	actualFormalMismatchCallee(false, true);
-	actualFormalMismatchCallee(1, 2);
-	actualFormalMismatchCallee(false, 3);
-
-   actualFormalMismatchCallee(b10, true);
-   actualFormalMismatchCallee(b10 || b20 , true);
-   actualFormalMismatchCallee(i20, -i10);
-   actualFormalMismatchCallee(b10 && i20 <= 1, i20*i20);
-   actualFormalMismatchCallee(b10, b20);
+   if(actualFormalMismatchCallee(1, 2)){
+      actualFormalMismatchCallee(false, 3);
+   }
+   if(!actualFormalMismatchCallee(b10, true)){
+      actualFormalMismatchCallee(b10 || b20 , true);
+   }else{
+      actualFormalMismatchCallee(i20, -i10);
+   }
+   while(actualFormalMismatchCallee(b10 && i20 <= 1, i20*i20) && false){
+      actualFormalMismatchCallee(b10, b20);
+   }
    actualFormalMismatchCallee(!b10 || !b20, b10 || b20);
    
 }
 //RET_VAL_MISSING
 int retValMissing(){
 	return;
+}
+int retValMissing2(){
+   if(true){
+      return retValMissing();
+      if(1==2){
+         return;
+      }
+   }else{
+      return;
+   }
+   while(false){
+      return
+   }
 }
 //RET_VAL_IN_VOID_FN
 void shouldNotRetVal1(){
@@ -138,9 +166,32 @@ void shouldNotRetVa1Exp(){
 void shouldNotRetVal2(){
 	return true;
 }
+int retInt(){
+   return 3;
+}
 void shouldNotRetVal2Exp(){
    bool b;
-   return b && b10;
+   int x;
+   if(!b){
+      return b && b10;
+   }else{
+      return false;
+   }
+   if(b){
+      return b10 || b;
+      if(false){
+         return 1;
+      }
+      if(b && true){
+         return -x + 1;
+      }else{
+         return retInt() * x;
+      }
+   }
+   while(b){
+      return b;
+   }
+   
 }
 void shouldNotRetStructField1(){
    struct space sss;
@@ -159,9 +210,31 @@ void shouldNotRetStructField2(){
 void shouldNotRetNestedStructField1(){
    return recursiveSpace.s.dim;
 }
+bool retBool(){
+   return true;
+}
 //WRONG_RET_TYPE_FOR_NON_VOID
 int shouldRetInt1(){
-	return false;
+   int x;
+   bool b;
+   if(x == 3){
+      return b;
+   }else{
+      return x!=2;
+      while(1){
+         return retBool();
+      }
+      return x > 1;
+   }
+   if(1==2){
+      return space;
+   }
+   if(x > 2){
+      return recursiveSpace;
+   }else{
+      return recursiveSpace.s;
+   }
+	return true;
 }
 int shouldRetInt2(){
    bool b;
@@ -235,11 +308,12 @@ void aonn(bool x, bool y) {
       x = y * 2;
       x++;
       x--;
+      x = -space *recursiveSpace/recursiveSpace.s-space;
    }
    while(x + y){
       y = (x + y) || x;
-      y++;
-      y--;
+      space++; //struct name
+      recursiveSpace--;//struct var
    }
    x++;
    x--;
@@ -315,17 +389,19 @@ void nbexp(int x) {
    }
    if(space + outerspace + 1){
       while(recursiveSpace * 3){
-
       }
    }
    if(x*y){
       x = x + y;
    }
-   if(1){
+   if(space){
       if(outerspace){//struct name
       }
    }else{
-      y--;
+      while(outerspace.dim){
+         y--;
+      }
+      
    }
    if (recursiveSpace) {//struct var
      x++;
@@ -343,6 +419,14 @@ void forCascading(int k){
    nbexp = eq;
    ocean = space;
    outerspace = recursiveSpace;
+   if(k>1){
+      nbexp = eq;
+   }else{
+      ocean = space;
+      while(k==0){
+         outerspace = recursiveSpace;
+      }
+   }
 }
 bool forAllErrs(int c1){
    if(c1 == 3){
