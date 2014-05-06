@@ -53,6 +53,9 @@ int func (int x, bool b) {
 bool test (int x, int y) {
    // WhileStmtNode's checkType
    while (x != y) {
+      while (x == y) {
+         return true;
+      }
       x = y;
    }
    // ReturnStmtNode's, CallExpNode's typeCheck
