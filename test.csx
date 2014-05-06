@@ -27,7 +27,7 @@ int func (int x, bool b) {
    // IfElseStmtNode's, ExpNode's, & IdNode's typeCheck
    if (a) {
       // ReturnStmtNode's & IdNode's typeCheck
-      return x;
+      return x*x -3/test.x;
    }
    else {
       // AssignStmtNode's, IdNode's typeCheck
@@ -37,7 +37,9 @@ int func (int x, bool b) {
    if (a) {
       return x;
    }
-
+   while(!a){
+      return test.x;
+   }
    // ReturnStmtNode's, UnaryMinusNode's, PlusNode's, DivideNode's, MinusNode's,
    // TimesNode's, & IntLitNode's typeCheck
    return -(4+3/2-5*2);
@@ -47,6 +49,8 @@ int func (int x, bool b) {
    // Read/WriteStmtNode's, and StringLitNode's typeCheck
    cin >> 3;
    cout << "hello";
+   cin >> test.x + test.y;
+   cout << test.x == 1 && test.y >= 3;
 }
 
 // FnDeclNode's typeCheck
@@ -57,6 +61,7 @@ bool test (int x, int y) {
          return true;
       }
       x = y;
+      return func(1, x-y > -1) > 2;
    }
    // ReturnStmtNode's, CallExpNode's typeCheck
    return ((x+y) == func(x, true));
