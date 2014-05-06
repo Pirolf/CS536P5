@@ -192,8 +192,8 @@ void aonn(bool x, bool y) {
    while(x + y){
       y = (x + y) || x;
    }
-   //x = x++;
-   //x = x--;
+   x++;
+   x--;
    x= b31*2;
    x = x + y - y * 2;
    x = 2 || i10 - x * y;
