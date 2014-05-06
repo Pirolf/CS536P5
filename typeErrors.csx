@@ -152,7 +152,7 @@ int retValMissing2(){
       return;
    }
    while(false){
-      return
+      return;
    }
 }
 //RET_VAL_IN_VOID_FN
