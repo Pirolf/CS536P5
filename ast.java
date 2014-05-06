@@ -284,14 +284,9 @@ class FnBodyNode extends ASTnode {
         myStmtList.unparse(p, indent);
     }
     public void setRetType(TypeNode t){
-        retType = t;
-        List<StmtNode> sl = myStmtList.getStmtList();
-        Iterator<StmtNode> itr = sl.iterator();
-        while(itr.hasNext()){
-            StmtNode curr = itr.next();
-            if(curr instanceof ReturnStmtNode){
-                ((ReturnStmtNode)curr).setRetType(t);
-            }
+        // Loop through statement list, setting return type for each node
+        for (StmtNode n : myStmtList.getStmtList()) {
+            n.setRetType(t);
         }
     }
     // 2 kids
@@ -834,6 +829,12 @@ class StructNode extends TypeNode {
 abstract class StmtNode extends ASTnode {
     abstract public void nameAnalysis(SymTable symTab);
     abstract public Type typeCheck();
+    // Set return type for this statement node
+    public void setRetType(TypeNode t) {
+       retType = t;
+    }
+
+    private TypeNode retType;
 }
 
 class AssignStmtNode extends StmtNode {
@@ -1110,6 +1111,12 @@ class IfStmtNode extends StmtNode {
         
         return null;
     }
+    
+    public void setRetType(TypeNode t) {
+         for (StmtNode n : myStmtList.getStmtList())
+            n.setRetType(t);
+    }
+    
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("if (");
@@ -1195,6 +1202,12 @@ class IfElseStmtNode extends StmtNode {
         
         return null;
     }
+    public void setRetType(TypeNode t) {
+         for (StmtNode n : myThenStmtList.getStmtList())
+            n.setRetType(t);
+         for (StmtNode n : myElseStmtList.getStmtList())
+            n.setRetType(t);
+    }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("if (");
@@ -1265,6 +1278,10 @@ class WhileStmtNode extends StmtNode {
         myDeclList.typeCheck();
         myStmtList.typeCheck();
         return null;
+    }
+    public void setRetType(TypeNode t) {
+         for (StmtNode n : myStmtList.getStmtList())
+            n.setRetType(t);
     }
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
