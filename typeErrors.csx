@@ -71,11 +71,18 @@ void callNonFn(){
 
    outerspace(); //struct var
    recursiveSpace(); //nested struct var
+   if(outerspace() && b3()){
+      recursiveSpace();
+   }else{
+      sosHere();
+   }
+   while(space() || b1()){
+      i3();
+   }
 }
 //CALL_FN_WITH_WRONG_NUM_ARGS
-void wrongArgsCallee(int i1, int i2, bool b1){
+int wrongArgsCallee(int i1, int i2, bool b1){
 }
-
 int i10;
 bool b10;
 void wrongArgsCaller(int i1, bool b1){
@@ -88,6 +95,8 @@ void wrongArgsCaller(int i1, bool b1){
    wrongArgsCallee(1, 2, true, 3); // actual > param
    wrongArgsCallee(i10 * 2 /i11, i10 > 1 || i11 == i10, i11-2, !b10);
    wrongArgsCallee(); // no actuals
+   i11 = wrongArgsCallee(i10, b10) + b11 = b11;
+   b11 = wrongArgsCallee(i10 * 2 /i11, i10 > 1 || i11 == i10, i11-2, !b10);
 }
 //test if there are cascading errors 
 void wrongArgsCallerCaller(){
@@ -137,6 +146,13 @@ void shouldNotRetStructField1(){
    struct space sss;
    return sss.dim;
 }
+void shouldNotRetStructVar(){
+   struct space sss;
+   return sss;
+}
+void shouldNotRetStructName(){
+   return space;
+}
 void shouldNotRetStructField2(){
    return outerspace.dim;
 }
@@ -151,6 +167,12 @@ int shouldRetInt2(){
    bool b;
    return b ||!b10;
 }
+int shouldRetInt3(){
+   return space;
+}
+int shouldRetInt4(){
+   return recursiveSpace;
+}
 bool shouldRetBool1(){
 	return 1;
 }
@@ -158,6 +180,23 @@ bool shouldRetBool2(){
    int i;
    return i10 *i + 1;
 }
+bool shouldRetBool3(){
+   return f1();
+}
+int f3(){
+   int x;
+   return x;
+}
+bool shouldRetBool4(){
+   return f1() * f3() + 3;
+}
+bool f2(){
+   return false;
+}
+int shouldRetInt5(){
+   return f2() && f2();
+}
+
 
 // LOG_OP_TO_NON_BOOL
 int x1;
@@ -173,6 +212,10 @@ void lnb(int x, int y) {
    }
    while(y || 3){
       x = 3 + !y;
+      if(space && outerspace){//struct name
+         x = !recursiveSpace;//struct var
+         x = recursiveSpace.speed && recursiveSpace.s;
+      }
    }
 }
 
@@ -186,11 +229,17 @@ void aonn(bool x, bool y) {
    x = -x;
    if(x + 3 > 2){
       x = !(x - x/2) && y;
+      x++;
+      x--;
    }else{
       x = y * 2;
+      x++;
+      x--;
    }
    while(x + y){
       y = (x + y) || x;
+      y++;
+      y--;
    }
    x++;
    x--;
@@ -214,6 +263,12 @@ void ronn(bool x, bool y, bool z) {
    }
    while( x < z){
       z = z <= x;
+      z = space <= recursiveSpace.s;
+      while(recursiveSpace.speed > space){
+         if(recursiveSpace.s < outerspace.dim){
+
+         }
+      }
    }
 }
 
@@ -226,11 +281,16 @@ void eq(int x, bool y) {
    x = aonn == ronn;
    x = x == y;
    if(ronn(y, y) == aonn(y, y)){
+      if(space == recursiveSpace && space == x){
+      //struct name == struct var, struct name==int 
+         x = x != recursiveSpace;
+         y = y == space; //bool == struct var
+      }
       x = x != y;
    }else{
       x = ronn(y, y) == aonn(y, y);
    }
-   while(x==y){
+   while(x==y && y!= recursiveSpace){
       x = aonn == ronn;
    }
 }
@@ -246,20 +306,28 @@ void nbexp(int x) {
    }
    while(1){
       x++;
+      while(space){//struct name
+         if (x) {
+            x--;
+            x = !x;
+         }
+      }
    }
-   if (x) {
-      x--;
-      x = !x;
+   if(space + outerspace + 1){
+      while(recursiveSpace * 3){
+
+      }
    }
    if(x*y){
       x = x + y;
    }
    if(1){
-
+      if(outerspace){//struct name
+      }
    }else{
       y--;
    }
-   if (x) {
+   if (recursiveSpace) {//struct var
      x++;
    } else {
      x--;
@@ -270,11 +338,17 @@ struct ocean{
    int sea;
 };
 int water;
+//FN_ASSIGN, STRUCT_NAME_ASSIGN, STRUCT_VAR_ASSIGN
 void forCascading(int k){
-
+   nbexp = eq;
+   ocean = space;
+   outerspace = recursiveSpace;
 }
 bool forAllErrs(int c1){
-   return false;
+   if(c1 == 3){
+      return c1;
+   }
+   return 2;    
 }
 //Test Cascading Errors
 void noCascading(){
